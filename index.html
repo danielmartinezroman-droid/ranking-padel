@@ -348,10 +348,30 @@
       flex-wrap:wrap;
     }
 
+    /* ===== Mejoras MOBILE ===== */
     @media (max-width: 720px){
-      .card{ align-items:flex-start; }
-      .right{ justify-content:flex-start; }
+      .podiumCard{ padding: 14px; }
+      .podiumCard::after{ font-size: 72px; bottom: -6px; }
+      .podiumAvatar{ width: 58px; height: 58px; }
+      .podiumCard.rank1 .podiumAvatar{ width: 66px; height: 66px; }
+
+      .card{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .left{ width: 100%; }
       .bar{ width: 100%; }
+      .right{
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .chips{ width: 100%; }
+      .chip{
+        flex: 1 1 auto;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -387,8 +407,8 @@
       { name: "Dani M.",  sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg" },
       { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg" },
       { name: "Yuri",    sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg"   },
-      { name: "Ric",     sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg"    },
       { name: "Feli",    sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg"   },
+      { name: "Ric",     sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg"    },
       { name: "Esteban", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg"}
     ];
     // ============================
