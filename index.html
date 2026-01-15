@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Torneo de Pádel — Ranking</title>
+
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.60);
+      --accent:#7C5CFF;
+      --accent2:#22D3EE;
+      --good:#34D399;
+      --warn:#FBBF24;
+      --bad:#FB7185;
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%),
+        radial-gradient(900px 450px at 85% 20%, rgba(34,211,238,.18), transparent 55%),
+        radial-gradient(900px 450px at 45% 90%, rgba(52,211,153,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 28px 18px 40px; }
+
+    header{
+      display:flex; gap:14px;
+      justify-content:space-between; align-items:flex-end;
+      flex-wrap:wrap; margin-bottom: 16px;
+    }
+
+    .title{ display:flex; flex-direction:column; gap:6px; }
+    h1{ font-size: 22px; margin:0; letter-spacing:.2px; }
+    .sub{ color:var(--muted); font-size: 13px; }
+
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px; border-radius: 999px;
+      display:flex; gap:8px; align-items:center;
+      font-size: 13px; color:var(--muted);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+    .chip b{ color:var(--text); font-weight:600; }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+
+    /* ===== Podio Top 3 ===== */
+    .podium{
+      display:grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap:12px;
+      margin-top: 14px;
+      margin-bottom: 12px;
+    }
+
+    .podiumCard{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow:hidden;
+    }
+
+    .podiumCard::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: 22px;
+      opacity:.55;
+      filter: blur(18px);
+      background: radial-gradient(circle at 20% 15%, rgba(124,92,255,.45), transparent 55%),
+                  radial-gradient(circle at 80% 25%, rgba(34,211,238,.32), transparent 55%);
+    }
+
+    /* número gigante en el fondo (usa data-rank="1/2/3") */
+    .podiumCard::after{
+      content: attr(data-rank);
+      position:absolute;
+      right: 14px;
+      bottom: -10px;
+      font-family: var(--mono);
+      font-weight: 900;
+      font-size: 96px;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      opacity: .10;
+      pointer-events:none;
+      z-index: 0;
+    }
+    .podiumCard.rank1::after{ color: rgba(255,215,0,.90); }
+    .podiumCard.rank2::after{ color: rgba(203,213,225,.90); }
+    .podiumCard.rank3::after{ color: rgba(205,127,50,.90); }
+
+    .podiumTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      position:relative;
+      z-index:1;
+      margin-bottom: 10px;
+    }
+
+    .podiumAvatar{
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
+      flex: 0 0 auto;
+    }
+    .podiumAvatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .podiumBig{
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,.18);
+    }
+    .podiumCard.rank1 .podiumAvatar{
+      width: 74px;
+      height: 74px;
+      border-color: rgba(255,215,0,.35);
+      box-shadow: 0 0 0 6px rgba(255,215,0,.08), 0 22px 60px rgba(0,0,0,.40);
+    }
+
+    .podiumMedal{
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      display:grid;
+      place-items:center;
+      font-family: var(--mono);
+      font-weight: 900;
+      position:relative;
+      z-index:1;
+    }
+
+    .medalGold{
+      background: radial-gradient(circle at 30% 30%, rgba(255,215,0,.55), rgba(255,255,255,.08) 60%);
+      box-shadow: 0 0 0 4px rgba(255,215,0,.08), 0 25px 60px rgba(255,215,0,.12);
+    }
+    .medalSilver{
+      background: radial-gradient(circle at 30% 30%, rgba(203,213,225,.55), rgba(255,255,255,.08) 60%);
+      box-shadow: 0 0 0 4px rgba(203,213,225,.10), 0 25px 60px rgba(203,213,225,.10);
+    }
+    .medalBronze{
+      background: radial-gradient(circle at 30% 30%, rgba(205,127,50,.55), rgba(255,255,255,.08) 60%);
+      box-shadow: 0 0 0 4px rgba(205,127,50,.10), 0 25px 60px rgba(205,127,50,.10);
+    }
+
+    .podiumName{ position:relative; z-index:1; display:flex; flex-direction:column; gap:6px; }
+    .podiumName strong{ font-size: 15px; letter-spacing:.2px; }
+    .podiumMeta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      color: rgba(255,255,255,.60);
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px){
+      .podium{ grid-template-columns: 1fr; }
+      .podiumBig{ transform:none; }
+    }
+
+    /* ===== Lista ===== */
+    #list{ display:flex; flex-direction:column; gap:12px; margin-top: 14px; }
+
+    .card{
+      position: relative; overflow: hidden;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      display:flex; justify-content:space-between; gap:14px; align-items:center;
+
+      /* animación entrada */
+      opacity: 0;
+      animation: enterCard 520ms cubic-bezier(.2,.9,.2,1) both;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(124,92,255,.35);
+      background: linear-gradient(180deg, rgba(124,92,255,.12), rgba(255,255,255,.04));
+    }
+
+    /* Shine */
+    .card::before{
+      content:"";
+      position:absolute; top:-40%; left:-60%;
+      width: 60%; height: 200%;
+      background: linear-gradient(120deg,
+        transparent 0%,
+        rgba(255,255,255,.10) 40%,
+        rgba(255,255,255,.18) 50%,
+        rgba(255,255,255,.10) 60%,
+        transparent 100%);
+      transform: rotate(18deg);
+      opacity: 0; transition: opacity .2s ease;
+      pointer-events:none;
+    }
+    .card:hover::before{ opacity: 1; animation: shine 900ms ease forwards; }
+
+    @keyframes shine{
+      from { transform: translateX(0) rotate(18deg); }
+      to   { transform: translateX(260%) rotate(18deg); }
+    }
+
+    @keyframes enterCard{
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .left{ display:flex; align-items:center; gap:12px; min-width: 0; flex: 1 1 auto; }
+    .rank{
+      font-family: var(--mono);
+      color: rgba(255,255,255,.70);
+      width: 36px; text-align:center;
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      flex: 0 0 auto;
+    }
+
+    /* Avatar con glow */
+    .avatar{
+      width: 44px; height: 44px; border-radius: 999px;
+      position: relative; overflow: hidden; flex: 0 0 auto;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .avatar img{
+      width:100%; height:100%; object-fit:cover; display:block;
+      transform: scale(1);
+      transition: transform .35s ease, filter .35s ease;
+      position:relative; z-index:1;
+    }
+    .avatar::after{
+      content:"";
+      position:absolute; inset:-2px; border-radius: 999px;
+      background: conic-gradient(from 180deg, var(--accent), var(--accent2), var(--good), var(--accent));
+      filter: blur(10px);
+      opacity: 0; transition: opacity .25s ease;
+      z-index: 0;
+    }
+    .card:hover .avatar{
+      transform: translateY(-1px) scale(1.05);
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.14), 0 18px 40px rgba(0,0,0,.35);
+    }
+    .card:hover .avatar::after{ opacity: .85; }
+    .card:hover .avatar img{ transform: scale(1.12); filter: saturate(1.15) contrast(1.05); }
+
+    .nameBlock{ min-width:0; display:flex; flex-direction:column; gap:6px; flex: 1 1 auto; }
+    .nameLine{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .nameLine strong{ color:var(--text); font-weight:750; font-size: 14px; }
+
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      color: rgba(255,255,255,.78);
+    }
+    .badge.good{ border-color: rgba(52,211,153,.35); color: rgba(52,211,153,.95); }
+    .badge.warn{ border-color: rgba(251,191,36,.35); color: rgba(251,191,36,.95); }
+    .badge.bad{ border-color: rgba(251,113,133,.35); color: rgba(251,113,133,.95); }
+
+    /* Medallas / etiquetas */
+    .badge.elite{ border-color: rgba(52,211,153,.35); color: rgba(52,211,153,.95); }
+    .badge.fight{ border-color: rgba(251,191,36,.35); color: rgba(251,191,36,.95); }
+    .badge.comeback{ border-color: rgba(251,113,133,.35); color: rgba(251,113,133,.95); }
+
+    /* Glow por categoría al hover */
+    .card.elite:hover{ border-color: rgba(52,211,153,.35); }
+    .card.fight:hover{ border-color: rgba(251,191,36,.35); }
+    .card.comeback:hover{ border-color: rgba(251,113,133,.35); }
+
+    .bar{
+      width: min(420px, 100%);
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .bar > span{
+      display:block; height:100%;
+      width: var(--w);
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(34,211,238,.22);
+      transform-origin: left;
+      animation: fill 900ms cubic-bezier(.2,.9,.2,1) both;
+    }
+    @keyframes fill{ from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    .right{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center; flex: 0 0 auto; }
+    .pill{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.70);
+      display:flex; gap:8px; align-items:center;
+      font-variant-numeric: tabular-nums;
+      white-space:nowrap;
+    }
+    .pill b{ color: rgba(255,255,255,.92); font-weight:700; }
+
+    .footer{
+      margin-top: 16px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    @media (max-width: 720px){
+      .card{ align-items:flex-start; }
+      .right{ justify-content:flex-start; }
+      .bar{ width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Torneo de Pádel — Ranking</h1>
+        <div class="sub">Ordenado por rendimiento (ganados / sets). Si un jugador tiene 0 sets, su rendimiento es 0%.</div>
+      </div>
+      <div class="chips">
+        <div class="chip"><span class="dot"></span> Estado: <b>En curso</b></div>
+        <div class="chip">Sets totales jugados: <b id="totalSets">-</b></div>
+        <div class="chip">Partidos ganados: <b id="totalWins">-</b></div>
+      </div>
+    </header>
+
+    <div id="podium" class="podium"></div>
+    <div id="list"></div>
+
+    <div class="footer">
+      <div>Tip: para actualizar, edita solo <code>const players = [...]</code> dentro del HTML.</div>
+      <div>Orden: rendimiento → sets → nombre.</div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // DATOS (cambia solo aquí)
+    // Fotos en carpeta: img/
+    // =========================================================
+    const players = [
+      { name: "Dani M.",  sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg" },
+      { name: "Yuri",    sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg"   },
+      { name: "Feli",    sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg"   },
+      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg" },
+      { name: "Ric",     sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg"    },
+      { name: "Esteban", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg"}
+    ];
+    // =========================================================
+
+    const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
+    const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
+
+    function medalLabel(pct){
+      if (pct >= 67) return { text: "Elite", cls: "elite" };
+      if (pct >= 34) return { text: "En pelea", cls: "fight" };
+      return { text: "Remontar", cls: "comeback" };
+    }
+
+    function renderPodium(sorted){
+      const podium = document.getElementById("podium");
+      if (!podium) return;
+
+      const top3 = sorted.slice(0,3);
+
+      // Podio visual: #2 izq, #1 centro, #3 der
+      const order = [1,0,2];
+      const mapped = order.map(i => top3[i]).filter(Boolean);
+
+      podium.innerHTML = mapped.map(p => {
+        const pct = perf(p);
+        const m = medalLabel(pct);
+
+        const realRank = (p === top3[0]) ? 1 : (p === top3[1]) ? 2 : 3;
+        const big = realRank === 1 ? "podiumBig" : "";
+        const medalClass = realRank === 1 ? "medalGold" : realRank === 2 ? "medalSilver" : "medalBronze";
+        const rankClass = realRank === 1 ? "rank1" : realRank === 2 ? "rank2" : "rank3";
+
+        return `
+          <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}">
+            <div class="podiumTop">
+              <div class="podiumAvatar">
+                <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
+              </div>
+              <span class="podiumMedal ${medalClass}">${realRank}</span>
+            </div>
+
+            <div class="podiumName">
+              <strong>${p.name}</strong>
+              <div class="podiumMeta">
+                <span class="badge ${badgeClass(pct)}">${pct}%</span>
+                <span class="badge ${m.cls}">${m.text}</span>
+                <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
+              </div>
+              <div class="bar" aria-label="Rendimiento ${pct}%">
+                <span style="--w:${pct}%"></span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    const sorted = [...players].sort((a,b) =>
+      perf(b) - perf(a) ||
+      Number(b.sets || 0) - Number(a.sets || 0) ||
+      String(a.name || "").localeCompare(String(b.name || ""))
+    );
+
+    // Totales
+    document.getElementById("totalSets").textContent =
+      players.reduce((s,p)=>s+Number(p.sets||0),0);
+
+    document.getElementById("totalWins").textContent =
+      players.reduce((s,p)=>s+Number(p.won||0),0);
+
+    // Podio
+    renderPodium(sorted);
+
+    // Lista
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    sorted.forEach((p, idx) => {
+      const pct = perf(p);
+      const m = medalLabel(pct);
+
+      const card = document.createElement("div");
+      card.className = "card " + m.cls;
+      card.style.animationDelay = (idx * 70) + "ms";
+
+      card.innerHTML = `
+        <div class="left">
+          <div class="rank">#${idx+1}</div>
+          <div class="avatar">
+            <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
+          </div>
+          <div class="nameBlock">
+            <div class="nameLine">
+              <strong>${p.name}</strong>
+              <span class="badge ${badgeClass(pct)}">${pct}%</span>
+              <span class="badge ${m.cls}">${m.text}</span>
+              <span style="color: rgba(255,255,255,.55); font-size:12px; font-family: var(--mono);">
+                ${p.won}G · ${p.lost}P
+              </span>
+            </div>
+            <div class="bar" aria-label="Rendimiento ${pct}%">
+              <span style="--w:${pct}%"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="pill">Sets: <b>${p.sets}</b></div>
+          <div class="pill">Ganados: <b>${p.won}</b></div>
+          <div class="pill">Perdidos: <b>${p.lost}</b></div>
+        </div>
+      `;
+
+      list.appendChild(card);
+    });
+  </script>
+</body>
+</html>
