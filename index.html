@@ -35,33 +35,40 @@
       min-height:100vh;
     }
 
+    /* LAYOUT: Panel centrado + video a la derecha */
     .main-container {
       display: flex;
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
-      gap: 20px;
       padding: 28px 18px 40px;
     }
 
     .wrap{ 
       flex: 1;
-      min-width: 0;
+      max-width: 980px;
+      margin: 0 auto;
     }
 
     /* ===== Sidebar de Video ===== */
     .video-sidebar {
-      width: 350px;
+      width: 380px;
       flex-shrink: 0;
-      position: sticky;
-      top: 28px;
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
       height: fit-content;
+      z-index: 100;
     }
 
     .video-wrapper {
       position: relative;
       width: 100%;
-      height: 550px;
+      height: 600px;
       overflow: hidden;
+      /* Degradado para difuminar bordes con el fondo */
+      mask-image: radial-gradient(ellipse 90% 85% at center, black 50%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 85% at center, black 50%, transparent 100%);
     }
 
     .video-wrapper video {
@@ -73,9 +80,11 @@
       top: 0;
       left: 0;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.4s ease;
       pointer-events: none;
-      mix-blend-mode: screen;
+      /* Mezcla el negro con el fondo */
+      mix-blend-mode: lighten;
+      filter: brightness(1.05) contrast(1.05);
     }
 
     .video-wrapper video.active {
@@ -127,6 +136,14 @@
       backdrop-filter: blur(10px);
       position: relative;
       overflow:hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .podiumCard:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(180deg, rgba(124,92,255,.15), rgba(255,255,255,.06));
     }
 
     .podiumCard::before{
@@ -177,10 +194,9 @@
       background: rgba(255,255,255,.06);
       box-shadow: 0 18px 45px rgba(0,0,0,.35);
       flex: 0 0 auto;
-      cursor: pointer;
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .podiumAvatar:hover {
+    .podiumCard:hover .podiumAvatar {
       transform: scale(1.05);
       border-color: var(--accent2);
     }
@@ -228,10 +244,9 @@
     .podiumName strong{ 
       font-size: 15px; 
       letter-spacing:.2px; 
-      cursor: pointer;
       transition: color 0.2s ease;
     }
-    .podiumName strong:hover {
+    .podiumCard:hover .podiumName strong {
       color: var(--accent2);
     }
     .podiumMeta{
@@ -274,6 +289,7 @@
       display:flex; justify-content:space-between; gap:14px; align-items:center;
       opacity: 0;
       animation: enterCard 520ms cubic-bezier(.2,.9,.2,1) both;
+      cursor: pointer;
     }
     .card:hover{
       transform: translateY(-2px);
@@ -324,7 +340,6 @@
       border:1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.06);
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-      cursor: pointer;
     }
     .avatar img{
       width:100%; height:100%; object-fit:cover; display:block;
@@ -354,10 +369,9 @@
       color:var(--text); 
       font-weight:750; 
       font-size: 14px; 
-      cursor: pointer;
       transition: color 0.2s ease;
     }
-    .nameLine strong:hover {
+    .card:hover .nameLine strong {
       color: var(--accent2);
     }
 
@@ -436,17 +450,11 @@
 
     /* ===== MOBILE ===== */
     @media (max-width: 1100px){
-      .main-container {
-        flex-direction: column;
-      }
       .video-sidebar {
-        width: 100%;
-        position: relative;
-        top: 0;
-        order: -1;
+        display: none;
       }
-      .video-wrapper {
-        height: 400px;
+      .wrap {
+        max-width: 100%;
       }
     }
 
@@ -472,10 +480,6 @@
       .chip{
         flex: 1 1 auto;
         justify-content: center;
-      }
-      
-      .video-wrapper {
-        height: 320px;
       }
     }
   </style>
@@ -505,7 +509,7 @@
       </div>
     </div>
 
-    <!-- Sidebar de Video - RUTA CAMBIADA A img/ -->
+    <!-- Sidebar de Video -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
         <video id="video-dani-a" muted loop playsinline preload="auto">
@@ -571,9 +575,10 @@
       }
     }
 
-    function addHoverEvents(element, videoId) {
-      element.addEventListener('mouseenter', () => showPlayerVideo(videoId));
-      element.addEventListener('mouseleave', hideAllVideos);
+    // HOVER EN TODO EL CUADRO (no solo avatar/nombre)
+    function addCardHoverEvents(cardElement, videoId) {
+      cardElement.addEventListener('mouseenter', () => showPlayerVideo(videoId));
+      cardElement.addEventListener('mouseleave', hideAllVideos);
     }
 
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
@@ -605,16 +610,16 @@
         const rankClass = realRank === 1 ? "rank1" : realRank === 2 ? "rank2" : "rank3";
 
         return `
-          <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}">
+          <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
             <div class="podiumTop">
-              <div class="podiumAvatar" data-video-id="${p.videoId}">
+              <div class="podiumAvatar">
                 <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
               </div>
               <span class="podiumMedal ${medalClass}">${realRank}</span>
             </div>
 
             <div class="podiumName">
-              <strong data-video-id="${p.videoId}">${p.name}</strong>
+              <strong>${p.name}</strong>
               <div class="podiumMeta">
                 <span class="points-badge">${pts} pts</span>
                 <span class="badge ${badgeClass(pct)}">${pct}%</span>
@@ -627,8 +632,9 @@
         `;
       }).join("");
 
-      podium.querySelectorAll('[data-video-id]').forEach(el => {
-        addHoverEvents(el, el.dataset.videoId);
+      // Hover en todo el cuadro del podio
+      podium.querySelectorAll('.podiumCard').forEach(card => {
+        addCardHoverEvents(card, card.dataset.videoId);
       });
     }
 
@@ -652,16 +658,17 @@
       const card = document.createElement("div");
       card.className = "card " + m.cls;
       card.style.animationDelay = (idx * 70) + "ms";
+      card.dataset.videoId = p.videoId;
 
       card.innerHTML = `
         <div class="left">
           <div class="rank">#${idx+1}</div>
-          <div class="avatar" data-video-id="${p.videoId}">
+          <div class="avatar">
             <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
           </div>
           <div class="nameBlock">
             <div class="nameLine">
-              <strong data-video-id="${p.videoId}">${p.name}</strong>
+              <strong>${p.name}</strong>
               <span class="points-badge">${pts} pts</span>
               <span class="badge ${badgeClass(pct)}">${pct}%</span>
               <span class="badge ${m.cls}">${m.text}</span>
@@ -681,9 +688,8 @@
         </div>
       `;
 
-      card.querySelectorAll('[data-video-id]').forEach(el => {
-        addHoverEvents(el, el.dataset.videoId);
-      });
+      // Hover en todo el cuadro de la lista
+      addCardHoverEvents(card, p.videoId);
 
       list.appendChild(card);
     });
