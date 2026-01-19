@@ -66,9 +66,11 @@
       width: 100%;
       height: 600px;
       overflow: hidden;
-      /* Degradado para difuminar bordes con el fondo */
-      mask-image: radial-gradient(ellipse 90% 85% at center, black 50%, transparent 100%);
-      -webkit-mask-image: radial-gradient(ellipse 90% 85% at center, black 50%, transparent 100%);
+      background: #000000;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 80px 40px rgba(0,0,0,0.9),
+        0 0 150px 80px rgba(0,0,0,0.6);
     }
 
     .video-wrapper video {
@@ -82,9 +84,6 @@
       opacity: 0;
       transition: opacity 0.4s ease;
       pointer-events: none;
-      /* Mezcla el negro con el fondo */
-      mix-blend-mode: lighten;
-      filter: brightness(1.05) contrast(1.05);
     }
 
     .video-wrapper video.active {
@@ -575,7 +574,6 @@
       }
     }
 
-    // HOVER EN TODO EL CUADRO (no solo avatar/nombre)
     function addCardHoverEvents(cardElement, videoId) {
       cardElement.addEventListener('mouseenter', () => showPlayerVideo(videoId));
       cardElement.addEventListener('mouseleave', hideAllVideos);
@@ -632,7 +630,6 @@
         `;
       }).join("");
 
-      // Hover en todo el cuadro del podio
       podium.querySelectorAll('.podiumCard').forEach(card => {
         addCardHoverEvents(card, card.dataset.videoId);
       });
@@ -688,7 +685,6 @@
         </div>
       `;
 
-      // Hover en todo el cuadro de la lista
       addCardHoverEvents(card, p.videoId);
 
       list.appendChild(card);
