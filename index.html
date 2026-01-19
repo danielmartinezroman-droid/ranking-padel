@@ -185,6 +185,18 @@
       font-size: 12px;
     }
 
+    /* Badge de puntos destacado */
+    .points-badge{
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      box-shadow: 0 4px 15px rgba(124,92,255,.35);
+    }
+
     @media (max-width: 860px){
       .podium{ grid-template-columns: 1fr; }
       .podiumBig{ transform:none; }
@@ -337,6 +349,16 @@
       white-space:nowrap;
     }
     .pill b{ color: rgba(255,255,255,.92); font-weight:700; }
+    
+    /* Pill destacado para puntos */
+    .pill.points{
+      background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(34,211,238,.20));
+      border-color: rgba(124,92,255,.45);
+    }
+    .pill.points b{
+      color: var(--accent2);
+      font-size: 14px;
+    }
 
     .footer{
       margin-top: 16px;
@@ -381,7 +403,7 @@
     <header>
       <div class="title">
         <h1>Meli Pádel Master 2026 — Ranking</h1>
-        <div class="sub">Ordenado por rendimiento (ganados / sets). Si un jugador tiene 0 sets, su rendimiento es 0%.</div>
+        <div class="sub">Ordenado por puntos (sets ganados). La barra muestra el rendimiento (%) como referencia.</div>
       </div>
       <div class="chips">
         <div class="chip"><span class="dot"></span> Estado: <b>En curso</b></div>
@@ -395,7 +417,7 @@
 
     <div class="footer">
       <div>Tip: Ganas el torneo cuando dejas de perseguir el trofeo y empiezas a dominar el proceso.</div>
-      <div>Orden: rendimiento → sets → nombre.</div>
+      <div>Orden: puntos → rendimiento → nombre.</div>
     </div>
   </div>
 
@@ -413,7 +435,12 @@
     ];
     // ============================
 
+    // Rendimiento (%) - solo para la barra visual
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
+    
+    // Puntos = sets ganados (para el ordenamiento)
+    const points = p => Number(p.won) || 0;
+    
     const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
 
     function medalLabel(pct){
@@ -432,6 +459,7 @@
 
       podium.innerHTML = mapped.map(p => {
         const pct = perf(p);
+        const pts = points(p);
         const m = medalLabel(pct);
 
         const realRank = (p === top3[0]) ? 1 : (p === top3[1]) ? 2 : 3;
@@ -451,6 +479,7 @@
             <div class="podiumName">
               <strong>${p.name}</strong>
               <div class="podiumMeta">
+                <span class="points-badge">${pts} pts</span>
                 <span class="badge ${badgeClass(pct)}">${pct}%</span>
                 <span class="badge ${m.cls}">${m.text}</span>
                 <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
@@ -464,10 +493,16 @@
       }).join("");
     }
 
+    // ========================================
+    // NUEVO ORDENAMIENTO: 
+    // 1. Por puntos (sets ganados) - descendente
+    // 2. Desempate por rendimiento (%) - descendente
+    // 3. Desempate por nombre - alfabético
+    // ========================================
     const sorted = [...players].sort((a,b) =>
-      perf(b) - perf(a) ||
-      Number(b.sets || 0) - Number(a.sets || 0) ||
-      String(a.name || "").localeCompare(String(b.name || ""))
+      points(b) - points(a) ||                                          // Primero por puntos (más gana)
+      perf(b) - perf(a) ||                                              // Desempate por rendimiento
+      String(a.name || "").localeCompare(String(b.name || ""))          // Desempate por nombre
     );
 
     document.getElementById("totalSets").textContent =
@@ -483,6 +518,7 @@
 
     sorted.forEach((p, idx) => {
       const pct = perf(p);
+      const pts = points(p);
       const m = medalLabel(pct);
 
       const card = document.createElement("div");
@@ -498,6 +534,7 @@
           <div class="nameBlock">
             <div class="nameLine">
               <strong>${p.name}</strong>
+              <span class="points-badge">${pts} pts</span>
               <span class="badge ${badgeClass(pct)}">${pct}%</span>
               <span class="badge ${m.cls}">${m.text}</span>
               <span style="color: rgba(255,255,255,.55); font-size:12px; font-family: var(--mono);">
@@ -511,6 +548,7 @@
         </div>
 
         <div class="right">
+          <div class="pill points">Puntos: <b>${pts}</b></div>
           <div class="pill">Sets: <b>${p.sets}</b></div>
           <div class="pill">Ganados: <b>${p.won}</b></div>
           <div class="pill">Perdidos: <b>${p.lost}</b></div>
