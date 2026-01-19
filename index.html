@@ -638,3 +638,55 @@
 
     document.getElementById("totalSets").textContent = players.reduce((s,p)=>s+Number(p.sets||0),0);
     document.getElementById("totalWins").textContent = players.reduce((s,p)=>s+Number(p.won||0),0);
+
+    renderPodium(sorted);
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    sorted.forEach((p, idx) => {
+      const pct = perf(p);
+      const pts = points(p);
+      const m = medalLabel(pct);
+
+      const card = document.createElement("div");
+      card.className = "card " + m.cls;
+      card.style.animationDelay = (idx * 70) + "ms";
+
+      card.innerHTML = `
+        <div class="left">
+          <div class="rank">#${idx+1}</div>
+          <div class="avatar" data-video-id="${p.videoId}">
+            <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
+          </div>
+          <div class="nameBlock">
+            <div class="nameLine">
+              <strong data-video-id="${p.videoId}">${p.name}</strong>
+              <span class="points-badge">${pts} pts</span>
+              <span class="badge ${badgeClass(pct)}">${pct}%</span>
+              <span class="badge ${m.cls}">${m.text}</span>
+              <span style="color: rgba(255,255,255,.55); font-size:12px; font-family: var(--mono);">
+                ${p.won}G · ${p.lost}P
+              </span>
+            </div>
+            <div class="bar"><span style="--w:${pct}%"></span></div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="pill points">Puntos: <b>${pts}</b></div>
+          <div class="pill">Sets: <b>${p.sets}</b></div>
+          <div class="pill">Ganados: <b>${p.won}</b></div>
+          <div class="pill">Perdidos: <b>${p.lost}</b></div>
+        </div>
+      `;
+
+      card.querySelectorAll('[data-video-id]').forEach(el => {
+        addHoverEvents(el, el.dataset.videoId);
+      });
+
+      list.appendChild(card);
+    });
+  </script>
+</body>
+</html>
