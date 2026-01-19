@@ -35,7 +35,136 @@
       min-height:100vh;
     }
 
-    .wrap{ max-width: 980px; margin: 0 auto; padding: 28px 18px 40px; }
+    /* Layout principal con sidebar */
+    .main-container {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 20px;
+      padding: 28px 18px 40px;
+    }
+
+    .wrap{ 
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ===== Sidebar de Video ===== */
+    .video-sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 28px;
+      height: fit-content;
+    }
+
+    .video-container {
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .video-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9/16;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(0,0,0,.5);
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .video-wrapper video.active {
+      display: block;
+    }
+
+    .video-wrapper img.player-static {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .video-wrapper img.player-static.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .video-placeholder svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .player-name-display {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(124,92,255,.20), rgba(34,211,238,.15));
+      border: 1px solid rgba(124,92,255,.30);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .player-name-display.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     header{
       display:flex; gap:14px;
@@ -175,7 +304,15 @@
     }
 
     .podiumName{ position:relative; z-index:1; display:flex; flex-direction:column; gap:6px; }
-    .podiumName strong{ font-size: 15px; letter-spacing:.2px; }
+    .podiumName strong{ 
+      font-size: 15px; 
+      letter-spacing:.2px; 
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .podiumName strong:hover {
+      color: var(--accent2);
+    }
     .podiumMeta{
       display:flex;
       gap:8px;
@@ -294,7 +431,16 @@
 
     .nameBlock{ min-width:0; display:flex; flex-direction:column; gap:6px; flex: 1 1 auto; }
     .nameLine{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .nameLine strong{ color:var(--text); font-weight:750; font-size: 14px; }
+    .nameLine strong{ 
+      color:var(--text); 
+      font-weight:750; 
+      font-size: 14px; 
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .nameLine strong:hover {
+      color: var(--accent2);
+    }
 
     .badge{
       font-family: var(--mono);
@@ -371,6 +517,22 @@
     }
 
     /* ===== Mejoras MOBILE ===== */
+    @media (max-width: 1100px){
+      .main-container {
+        flex-direction: column;
+      }
+      .video-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        order: -1;
+      }
+      .video-wrapper {
+        aspect-ratio: 16/9;
+        max-height: 300px;
+      }
+    }
+
     @media (max-width: 720px){
       .podiumCard{ padding: 14px; }
       .podiumCard::after{ font-size: 72px; bottom: -6px; }
@@ -399,26 +561,75 @@
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title">
-        <h1>Meli Pádel Master 2026 — Ranking</h1>
-        <div class="sub">Ordenado por puntos (sets ganados). La barra muestra el rendimiento (%) como referencia.</div>
-      </div>
-      <div class="chips">
-        <div class="chip"><span class="dot"></span> Estado: <b>En curso</b></div>
-        <div class="chip">Sets totales jugados: <b id="totalSets">-</b></div>
-        <div class="chip">Partidos ganados: <b id="totalWins">-</b></div>
-      </div>
-    </header>
+  <div class="main-container">
+    <div class="wrap">
+      <header>
+        <div class="title">
+          <h1>Meli Pádel Master 2026 — Ranking</h1>
+          <div class="sub">Ordenado por puntos (sets ganados). La barra muestra el rendimiento (%) como referencia.</div>
+        </div>
+        <div class="chips">
+          <div class="chip"><span class="dot"></span> Estado: <b>En curso</b></div>
+          <div class="chip">Sets totales jugados: <b id="totalSets">-</b></div>
+          <div class="chip">Partidos ganados: <b id="totalWins">-</b></div>
+        </div>
+      </header>
 
-    <div id="podium" class="podium"></div>
-    <div id="list"></div>
+      <div id="podium" class="podium"></div>
+      <div id="list"></div>
 
-    <div class="footer">
-      <div>Tip: Ganas el torneo cuando dejas de perseguir el trofeo y empiezas a dominar el proceso.</div>
-      <div>Orden: puntos → rendimiento → nombre.</div>
+      <div class="footer">
+        <div>Tip: Ganas el torneo cuando dejas de perseguir el trofeo y empiezas a dominar el proceso.</div>
+        <div>Orden: puntos → rendimiento → nombre.</div>
+      </div>
     </div>
+
+    <!-- Sidebar de Video -->
+    <aside class="video-sidebar">
+      <div class="video-container">
+        <div class="video-title">
+          <span>Player Spotlight</span>
+        </div>
+        <div class="video-wrapper" id="videoWrapper">
+          <!-- Placeholder inicial -->
+          <div class="video-placeholder" id="videoPlaceholder">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            <span>Pasa el mouse sobre un jugador para ver su video</span>
+          </div>
+          
+          <!-- Imágenes estáticas PNG -->
+          <img class="player-static hidden" id="static-dani-a" src="img/Daniel Aguayo.png" alt="Daniel Aguayo">
+          <img class="player-static hidden" id="static-dani-m" src="img/Daniel Martinez.png" alt="Daniel Martinez">
+          <img class="player-static hidden" id="static-esteban" src="img/Esteban Pino.png" alt="Esteban Pino">
+          <img class="player-static hidden" id="static-feli" src="img/Felipe Rivero.png" alt="Felipe Rivero">
+          <img class="player-static hidden" id="static-ric" src="img/Ricardo Bernstein.png" alt="Ricardo Bernstein">
+          <img class="player-static hidden" id="static-yuri" src="img/Yuri Jimenez.png" alt="Yuri Jimenez">
+          
+          <!-- Videos de cada jugador -->
+          <video id="video-dani-a" muted loop playsinline>
+            <source src="videos/Daniel Aguayo.mp4" type="video/mp4">
+          </video>
+          <video id="video-dani-m" muted loop playsinline>
+            <source src="videos/Daniel Martinez.mp4" type="video/mp4">
+          </video>
+          <video id="video-esteban" muted loop playsinline>
+            <source src="videos/Esteban Pino.mp4" type="video/mp4">
+          </video>
+          <video id="video-feli" muted loop playsinline>
+            <source src="videos/Felipe Rivero.mp4" type="video/mp4">
+          </video>
+          <video id="video-ric" muted loop playsinline>
+            <source src="videos/Ricardo Bernstein.mp4" type="video/mp4">
+          </video>
+          <video id="video-yuri" muted loop playsinline>
+            <source src="videos/Yuri Jimenez.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="player-name-display" id="playerNameDisplay"></div>
+      </div>
+    </aside>
   </div>
 
   <script>
@@ -426,14 +637,86 @@
     // EDITA SOLO ESTA PARTE
     // ============================
     const players = [
-      { name: "Dani M.",  sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg" },
-      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg" },
-      { name: "Yuri",    sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg"   },
-      { name: "Feli",    sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg"   },
-      { name: "Ric",     sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg"    },
-      { name: "Esteban", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg"}
+      { name: "Dani M.",  fullName: "Daniel Martinez", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m" },
+      { name: "Dani A.", fullName: "Daniel Aguayo", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a" },
+      { name: "Yuri", fullName: "Yuri Jimenez", sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg", videoId: "yuri" },
+      { name: "Feli", fullName: "Felipe Rivero", sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg", videoId: "feli" },
+      { name: "Ric", fullName: "Ricardo Bernstein", sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg", videoId: "ric" },
+      { name: "Esteban", fullName: "Esteban Pino", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban" }
     ];
     // ============================
+
+    // Sistema de video sidebar
+    let currentVideo = null;
+    let currentStatic = null;
+    const placeholder = document.getElementById('videoPlaceholder');
+    const playerNameDisplay = document.getElementById('playerNameDisplay');
+
+    function showPlayerVideo(videoId, playerName) {
+      // Ocultar placeholder
+      placeholder.style.display = 'none';
+      
+      // Pausar y ocultar video anterior
+      if (currentVideo) {
+        currentVideo.pause();
+        currentVideo.currentTime = 0;
+        currentVideo.classList.remove('active');
+      }
+      
+      // Ocultar imagen estática anterior
+      if (currentStatic) {
+        currentStatic.classList.add('hidden');
+      }
+      
+      // Mostrar imagen estática primero
+      const staticImg = document.getElementById(`static-${videoId}`);
+      if (staticImg) {
+        staticImg.classList.remove('hidden');
+        currentStatic = staticImg;
+      }
+      
+      // Mostrar y reproducir nuevo video
+      const video = document.getElementById(`video-${videoId}`);
+      if (video) {
+        video.classList.add('active');
+        video.play().catch(e => console.log('Autoplay prevented:', e));
+        currentVideo = video;
+        
+        // Cuando el video carga, ocultar la imagen estática
+        video.oncanplay = () => {
+          if (staticImg) {
+            staticImg.classList.add('hidden');
+          }
+        };
+      }
+      
+      // Mostrar nombre del jugador
+      playerNameDisplay.textContent = playerName;
+      playerNameDisplay.classList.add('visible');
+    }
+
+    function hideAllVideos() {
+      // Mostrar placeholder
+      placeholder.style.display = 'flex';
+      
+      // Pausar y ocultar todos los videos
+      document.querySelectorAll('.video-wrapper video').forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+        video.classList.remove('active');
+      });
+      
+      // Ocultar todas las imágenes estáticas
+      document.querySelectorAll('.player-static').forEach(img => {
+        img.classList.add('hidden');
+      });
+      
+      currentVideo = null;
+      currentStatic = null;
+      
+      // Ocultar nombre del jugador
+      playerNameDisplay.classList.remove('visible');
+    }
 
     // Rendimiento (%) - solo para la barra visual
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
@@ -477,7 +760,7 @@
             </div>
 
             <div class="podiumName">
-              <strong>${p.name}</strong>
+              <strong data-video-id="${p.videoId}" data-player-name="${p.fullName}">${p.name}</strong>
               <div class="podiumMeta">
                 <span class="points-badge">${pts} pts</span>
                 <span class="badge ${badgeClass(pct)}">${pct}%</span>
@@ -491,6 +774,13 @@
           </div>
         `;
       }).join("");
+
+      // Agregar event listeners para el podio
+      podium.querySelectorAll('[data-video-id]').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          showPlayerVideo(el.dataset.videoId, el.dataset.playerName);
+        });
+      });
     }
 
     // ========================================
@@ -533,7 +823,7 @@
           </div>
           <div class="nameBlock">
             <div class="nameLine">
-              <strong>${p.name}</strong>
+              <strong data-video-id="${p.videoId}" data-player-name="${p.fullName}">${p.name}</strong>
               <span class="points-badge">${pts} pts</span>
               <span class="badge ${badgeClass(pct)}">${pct}%</span>
               <span class="badge ${m.cls}">${m.text}</span>
@@ -555,11 +845,19 @@
         </div>
       `;
 
+      // Agregar event listeners para las tarjetas
+      const nameEl = card.querySelector('[data-video-id]');
+      if (nameEl) {
+        nameEl.addEventListener('mouseenter', () => {
+          showPlayerVideo(nameEl.dataset.videoId, nameEl.dataset.playerName);
+        });
+      }
+
       list.appendChild(card);
     });
+
+    // Event listener global para cuando el mouse sale del área de ranking
+    document.querySelector('.wrap').addEventListener('mouseleave', hideAllVideos);
   </script>
 </body>
 </html>
-
-
-
