@@ -75,7 +75,6 @@
       opacity: 0;
       transition: opacity 0.3s ease;
       pointer-events: none;
-      /* TRUCO: El negro se vuelve transparente */
       mix-blend-mode: screen;
     }
 
@@ -506,26 +505,26 @@
       </div>
     </div>
 
-    <!-- Sidebar de Video con fondo negro + mix-blend-mode -->
+    <!-- Sidebar de Video - RUTA CAMBIADA A img/ -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
         <video id="video-dani-a" muted loop playsinline preload="auto">
-          <source src="videos/Daniel Aguayo.mp4" type="video/mp4">
+          <source src="img/Daniel Aguayo.mp4" type="video/mp4">
         </video>
         <video id="video-dani-m" muted loop playsinline preload="auto">
-          <source src="videos/Daniel Martinez.mp4" type="video/mp4">
+          <source src="img/Daniel Martinez.mp4" type="video/mp4">
         </video>
         <video id="video-esteban" muted loop playsinline preload="auto">
-          <source src="videos/Esteban Pino.mp4" type="video/mp4">
+          <source src="img/Esteban Pino.mp4" type="video/mp4">
         </video>
         <video id="video-feli" muted loop playsinline preload="auto">
-          <source src="videos/Felipe Rivero.mp4" type="video/mp4">
+          <source src="img/Felipe Rivero.mp4" type="video/mp4">
         </video>
         <video id="video-ric" muted loop playsinline preload="auto">
-          <source src="videos/Ricardo Bernstein.mp4" type="video/mp4">
+          <source src="img/Ricardo Bernstein.mp4" type="video/mp4">
         </video>
         <video id="video-yuri" muted loop playsinline preload="auto">
-          <source src="videos/Yuri Jimenez.mp4" type="video/mp4">
+          <source src="img/Yuri Jimenez.mp4" type="video/mp4">
         </video>
       </div>
     </aside>
@@ -639,55 +638,3 @@
 
     document.getElementById("totalSets").textContent = players.reduce((s,p)=>s+Number(p.sets||0),0);
     document.getElementById("totalWins").textContent = players.reduce((s,p)=>s+Number(p.won||0),0);
-
-    renderPodium(sorted);
-
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-
-    sorted.forEach((p, idx) => {
-      const pct = perf(p);
-      const pts = points(p);
-      const m = medalLabel(pct);
-
-      const card = document.createElement("div");
-      card.className = "card " + m.cls;
-      card.style.animationDelay = (idx * 70) + "ms";
-
-      card.innerHTML = `
-        <div class="left">
-          <div class="rank">#${idx+1}</div>
-          <div class="avatar" data-video-id="${p.videoId}">
-            <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
-          </div>
-          <div class="nameBlock">
-            <div class="nameLine">
-              <strong data-video-id="${p.videoId}">${p.name}</strong>
-              <span class="points-badge">${pts} pts</span>
-              <span class="badge ${badgeClass(pct)}">${pct}%</span>
-              <span class="badge ${m.cls}">${m.text}</span>
-              <span style="color: rgba(255,255,255,.55); font-size:12px; font-family: var(--mono);">
-                ${p.won}G · ${p.lost}P
-              </span>
-            </div>
-            <div class="bar"><span style="--w:${pct}%"></span></div>
-          </div>
-        </div>
-
-        <div class="right">
-          <div class="pill points">Puntos: <b>${pts}</b></div>
-          <div class="pill">Sets: <b>${p.sets}</b></div>
-          <div class="pill">Ganados: <b>${p.won}</b></div>
-          <div class="pill">Perdidos: <b>${p.lost}</b></div>
-        </div>
-      `;
-
-      card.querySelectorAll('[data-video-id]').forEach(el => {
-        addHoverEvents(el, el.dataset.videoId);
-      });
-
-      list.appendChild(card);
-    });
-  </script>
-</body>
-</html>
