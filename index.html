@@ -51,119 +51,38 @@
 
     /* ===== Sidebar de Video ===== */
     .video-sidebar {
-      width: 320px;
+      width: 350px;
       flex-shrink: 0;
       position: sticky;
       top: 28px;
       height: fit-content;
     }
 
-    .video-container {
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-      border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: 0 18px 55px rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-
-    .video-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .video-title::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.9); }
-    }
-
     .video-wrapper {
       position: relative;
       width: 100%;
-      aspect-ratio: 9/16;
-      border-radius: 12px;
+      height: 500px;
       overflow: hidden;
-      background: rgba(0,0,0,.5);
     }
 
-    .video-wrapper video {
+    .video-wrapper video,
+    .video-wrapper img.player-media {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-
-    .video-wrapper video.active {
-      display: block;
-    }
-
-    .video-wrapper img.player-static {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      object-position: center;
       position: absolute;
       top: 0;
       left: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .video-wrapper img.player-static.hidden {
       opacity: 0;
-      pointer-events: none;
+      transition: opacity 0.4s ease;
+      /* Efecto croma - hace el negro transparente */
+      mix-blend-mode: screen;
     }
 
-    .video-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .video-placeholder svg {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 12px;
-      opacity: 0.5;
-    }
-
-    .player-name-display {
-      margin-top: 12px;
-      padding: 10px 14px;
-      background: linear-gradient(135deg, rgba(124,92,255,.20), rgba(34,211,238,.15));
-      border: 1px solid rgba(124,92,255,.30);
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
-    }
-
-    .player-name-display.visible {
+    .video-wrapper video.active,
+    .video-wrapper img.player-media.active {
       opacity: 1;
-      transform: translateY(0);
     }
 
     header{
@@ -224,7 +143,6 @@
                   radial-gradient(circle at 80% 25%, rgba(34,211,238,.32), transparent 55%);
     }
 
-    /* número gigante en el fondo */
     .podiumCard::after{
       content: attr(data-rank);
       position:absolute;
@@ -262,6 +180,7 @@
       background: rgba(255,255,255,.06);
       box-shadow: 0 18px 45px rgba(0,0,0,.35);
       flex: 0 0 auto;
+      cursor: pointer;
     }
     .podiumAvatar img{
       width:100%;
@@ -322,7 +241,6 @@
       font-size: 12px;
     }
 
-    /* Badge de puntos destacado */
     .points-badge{
       font-family: var(--mono);
       font-size: 13px;
@@ -352,8 +270,6 @@
       backdrop-filter: blur(10px);
       transition: transform .15s ease, background .2s ease, border-color .2s ease;
       display:flex; justify-content:space-between; gap:14px; align-items:center;
-
-      /* animación entrada */
       opacity: 0;
       animation: enterCard 520ms cubic-bezier(.2,.9,.2,1) both;
     }
@@ -406,6 +322,7 @@
       border:1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.06);
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      cursor: pointer;
     }
     .avatar img{
       width:100%; height:100%; object-fit:cover; display:block;
@@ -496,7 +413,6 @@
     }
     .pill b{ color: rgba(255,255,255,.92); font-weight:700; }
     
-    /* Pill destacado para puntos */
     .pill.points{
       background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(34,211,238,.20));
       border-color: rgba(124,92,255,.45);
@@ -528,8 +444,7 @@
         order: -1;
       }
       .video-wrapper {
-        aspect-ratio: 16/9;
-        max-height: 300px;
+        height: 350px;
       }
     }
 
@@ -555,6 +470,10 @@
       .chip{
         flex: 1 1 auto;
         justify-content: center;
+      }
+      
+      .video-wrapper {
+        height: 280px;
       }
     }
   </style>
@@ -584,57 +503,35 @@
       </div>
     </div>
 
-    <!-- Sidebar de Video -->
+    <!-- Sidebar de Video - Sin mensajes ni placeholders -->
     <aside class="video-sidebar">
-      <div class="video-container">
-        <div class="video-title">
-          <span>Player Spotlight</span>
-        </div>
-        <div class="video-wrapper" id="videoWrapper">
-          <!-- Placeholder inicial -->
-          <div class="video-placeholder" id="videoPlaceholder">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-            <span>Pasa el mouse sobre un jugador para ver su video</span>
-          </div>
-          
-          <!-- Imágenes estáticas PNG -->
-          <img class="player-static hidden" id="static-dani-a" src="img/Daniel Aguayo.png" alt="Daniel Aguayo">
-          <img class="player-static hidden" id="static-dani-m" src="img/Daniel Martinez.png" alt="Daniel Martinez">
-          <img class="player-static hidden" id="static-esteban" src="img/Esteban Pino.png" alt="Esteban Pino">
-          <img class="player-static hidden" id="static-feli" src="img/Felipe Rivero.png" alt="Felipe Rivero">
-          <img class="player-static hidden" id="static-ric" src="img/Ricardo Bernstein.png" alt="Ricardo Bernstein">
-          <img class="player-static hidden" id="static-yuri" src="img/Yuri Jimenez.png" alt="Yuri Jimenez">
-          
-          <!-- Videos de cada jugador -->
-          <video id="video-dani-a" muted loop playsinline>
-            <source src="videos/Daniel Aguayo.mp4" type="video/mp4">
-          </video>
-          <video id="video-dani-m" muted loop playsinline>
-            <source src="videos/Daniel Martinez.mp4" type="video/mp4">
-          </video>
-          <video id="video-esteban" muted loop playsinline>
-            <source src="videos/Esteban Pino.mp4" type="video/mp4">
-          </video>
-          <video id="video-feli" muted loop playsinline>
-            <source src="videos/Felipe Rivero.mp4" type="video/mp4">
-          </video>
-          <video id="video-ric" muted loop playsinline>
-            <source src="videos/Ricardo Bernstein.mp4" type="video/mp4">
-          </video>
-          <video id="video-yuri" muted loop playsinline>
-            <source src="videos/Yuri Jimenez.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="player-name-display" id="playerNameDisplay"></div>
+      <div class="video-wrapper" id="videoWrapper">
+        <!-- Videos de cada jugador -->
+        <video id="video-dani-a" muted loop playsinline preload="auto">
+          <source src="videos/Daniel Aguayo.mp4" type="video/mp4">
+        </video>
+        <video id="video-dani-m" muted loop playsinline preload="auto">
+          <source src="videos/Daniel Martinez.mp4" type="video/mp4">
+        </video>
+        <video id="video-esteban" muted loop playsinline preload="auto">
+          <source src="videos/Esteban Pino.mp4" type="video/mp4">
+        </video>
+        <video id="video-feli" muted loop playsinline preload="auto">
+          <source src="videos/Felipe Rivero.mp4" type="video/mp4">
+        </video>
+        <video id="video-ric" muted loop playsinline preload="auto">
+          <source src="videos/Ricardo Bernstein.mp4" type="video/mp4">
+        </video>
+        <video id="video-yuri" muted loop playsinline preload="auto">
+          <source src="videos/Yuri Jimenez.mp4" type="video/mp4">
+        </video>
       </div>
     </aside>
   </div>
 
   <script>
     // ============================
-    // EDITA SOLO ESTA PARTE
+    // DATOS DE JUGADORES
     // ============================
     const players = [
       { name: "Dani M.",  fullName: "Daniel Martinez", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m" },
@@ -646,16 +543,10 @@
     ];
     // ============================
 
-    // Sistema de video sidebar
+    // Sistema de video - Simple y directo
     let currentVideo = null;
-    let currentStatic = null;
-    const placeholder = document.getElementById('videoPlaceholder');
-    const playerNameDisplay = document.getElementById('playerNameDisplay');
 
-    function showPlayerVideo(videoId, playerName) {
-      // Ocultar placeholder
-      placeholder.style.display = 'none';
-      
+    function showPlayerVideo(videoId) {
       // Pausar y ocultar video anterior
       if (currentVideo) {
         currentVideo.pause();
@@ -663,73 +554,40 @@
         currentVideo.classList.remove('active');
       }
       
-      // Ocultar imagen estática anterior
-      if (currentStatic) {
-        currentStatic.classList.add('hidden');
-      }
-      
-      // Mostrar imagen estática primero
-      const staticImg = document.getElementById(`static-${videoId}`);
-      if (staticImg) {
-        staticImg.classList.remove('hidden');
-        currentStatic = staticImg;
-      }
-      
       // Mostrar y reproducir nuevo video
       const video = document.getElementById(`video-${videoId}`);
       if (video) {
         video.classList.add('active');
+        video.currentTime = 0;
         video.play().catch(e => console.log('Autoplay prevented:', e));
         currentVideo = video;
-        
-        // Cuando el video carga, ocultar la imagen estática
-        video.oncanplay = () => {
-          if (staticImg) {
-            staticImg.classList.add('hidden');
-          }
-        };
       }
-      
-      // Mostrar nombre del jugador
-      playerNameDisplay.textContent = playerName;
-      playerNameDisplay.classList.add('visible');
     }
 
     function hideAllVideos() {
-      // Mostrar placeholder
-      placeholder.style.display = 'flex';
-      
-      // Pausar y ocultar todos los videos
-      document.querySelectorAll('.video-wrapper video').forEach(video => {
-        video.pause();
-        video.currentTime = 0;
-        video.classList.remove('active');
-      });
-      
-      // Ocultar todas las imágenes estáticas
-      document.querySelectorAll('.player-static').forEach(img => {
-        img.classList.add('hidden');
-      });
-      
-      currentVideo = null;
-      currentStatic = null;
-      
-      // Ocultar nombre del jugador
-      playerNameDisplay.classList.remove('visible');
+      if (currentVideo) {
+        currentVideo.pause();
+        currentVideo.currentTime = 0;
+        currentVideo.classList.remove('active');
+        currentVideo = null;
+      }
     }
 
-    // Rendimiento (%) - solo para la barra visual
+    // Funciones de utilidad
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
-    
-    // Puntos = sets ganados (para el ordenamiento)
     const points = p => Number(p.won) || 0;
-    
     const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
 
     function medalLabel(pct){
       if (pct >= 67) return { text: "Elite", cls: "elite" };
       if (pct >= 34) return { text: "En pelea", cls: "fight" };
       return { text: "Remontar", cls: "comeback" };
+    }
+
+    // Función para agregar eventos de hover
+    function addHoverEvents(element, videoId) {
+      element.addEventListener('mouseenter', () => showPlayerVideo(videoId));
+      element.addEventListener('mouseleave', hideAllVideos);
     }
 
     function renderPodium(sorted){
@@ -753,14 +611,14 @@
         return `
           <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}">
             <div class="podiumTop">
-              <div class="podiumAvatar">
+              <div class="podiumAvatar" data-video-id="${p.videoId}">
                 <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
               </div>
               <span class="podiumMedal ${medalClass}">${realRank}</span>
             </div>
 
             <div class="podiumName">
-              <strong data-video-id="${p.videoId}" data-player-name="${p.fullName}">${p.name}</strong>
+              <strong data-video-id="${p.videoId}">${p.name}</strong>
               <div class="podiumMeta">
                 <span class="points-badge">${pts} pts</span>
                 <span class="badge ${badgeClass(pct)}">${pct}%</span>
@@ -775,24 +633,17 @@
         `;
       }).join("");
 
-      // Agregar event listeners para el podio
+      // Agregar event listeners para el podio (nombre y avatar)
       podium.querySelectorAll('[data-video-id]').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          showPlayerVideo(el.dataset.videoId, el.dataset.playerName);
-        });
+        addHoverEvents(el, el.dataset.videoId);
       });
     }
 
-    // ========================================
-    // NUEVO ORDENAMIENTO: 
-    // 1. Por puntos (sets ganados) - descendente
-    // 2. Desempate por rendimiento (%) - descendente
-    // 3. Desempate por nombre - alfabético
-    // ========================================
+    // Ordenamiento
     const sorted = [...players].sort((a,b) =>
-      points(b) - points(a) ||                                          // Primero por puntos (más gana)
-      perf(b) - perf(a) ||                                              // Desempate por rendimiento
-      String(a.name || "").localeCompare(String(b.name || ""))          // Desempate por nombre
+      points(b) - points(a) ||
+      perf(b) - perf(a) ||
+      String(a.name || "").localeCompare(String(b.name || ""))
     );
 
     document.getElementById("totalSets").textContent =
@@ -818,12 +669,12 @@
       card.innerHTML = `
         <div class="left">
           <div class="rank">#${idx+1}</div>
-          <div class="avatar">
+          <div class="avatar" data-video-id="${p.videoId}">
             <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
           </div>
           <div class="nameBlock">
             <div class="nameLine">
-              <strong data-video-id="${p.videoId}" data-player-name="${p.fullName}">${p.name}</strong>
+              <strong data-video-id="${p.videoId}">${p.name}</strong>
               <span class="points-badge">${pts} pts</span>
               <span class="badge ${badgeClass(pct)}">${pct}%</span>
               <span class="badge ${m.cls}">${m.text}</span>
@@ -845,19 +696,13 @@
         </div>
       `;
 
-      // Agregar event listeners para las tarjetas
-      const nameEl = card.querySelector('[data-video-id]');
-      if (nameEl) {
-        nameEl.addEventListener('mouseenter', () => {
-          showPlayerVideo(nameEl.dataset.videoId, nameEl.dataset.playerName);
-        });
-      }
+      // Agregar event listeners para las tarjetas (nombre y avatar)
+      card.querySelectorAll('[data-video-id]').forEach(el => {
+        addHoverEvents(el, el.dataset.videoId);
+      });
 
       list.appendChild(card);
     });
-
-    // Event listener global para cuando el mouse sale del área de ranking
-    document.querySelector('.wrap').addEventListener('mouseleave', hideAllVideos);
   </script>
 </body>
 </html>
