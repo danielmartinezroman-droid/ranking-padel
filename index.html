@@ -35,7 +35,6 @@
       min-height:100vh;
     }
 
-    /* Layout principal con sidebar */
     .main-container {
       display: flex;
       max-width: 1400px;
@@ -61,12 +60,11 @@
     .video-wrapper {
       position: relative;
       width: 100%;
-      height: 500px;
+      height: 550px;
       overflow: hidden;
     }
 
-    .video-wrapper video,
-    .video-wrapper img.player-media {
+    .video-wrapper video {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -75,13 +73,13 @@
       top: 0;
       left: 0;
       opacity: 0;
-      transition: opacity 0.4s ease;
-      /* Efecto croma - hace el negro transparente */
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      /* TRUCO: El negro se vuelve transparente */
       mix-blend-mode: screen;
     }
 
-    .video-wrapper video.active,
-    .video-wrapper img.player-media.active {
+    .video-wrapper video.active {
       opacity: 1;
     }
 
@@ -181,6 +179,11 @@
       box-shadow: 0 18px 45px rgba(0,0,0,.35);
       flex: 0 0 auto;
       cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .podiumAvatar:hover {
+      transform: scale(1.05);
+      border-color: var(--accent2);
     }
     .podiumAvatar img{
       width:100%;
@@ -432,7 +435,7 @@
       flex-wrap:wrap;
     }
 
-    /* ===== Mejoras MOBILE ===== */
+    /* ===== MOBILE ===== */
     @media (max-width: 1100px){
       .main-container {
         flex-direction: column;
@@ -444,7 +447,7 @@
         order: -1;
       }
       .video-wrapper {
-        height: 350px;
+        height: 400px;
       }
     }
 
@@ -473,7 +476,7 @@
       }
       
       .video-wrapper {
-        height: 280px;
+        height: 320px;
       }
     }
   </style>
@@ -503,10 +506,9 @@
       </div>
     </div>
 
-    <!-- Sidebar de Video - Sin mensajes ni placeholders -->
+    <!-- Sidebar de Video con fondo negro + mix-blend-mode -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
-        <!-- Videos de cada jugador -->
         <video id="video-dani-a" muted loop playsinline preload="auto">
           <source src="videos/Daniel Aguayo.mp4" type="video/mp4">
         </video>
@@ -534,32 +536,29 @@
     // DATOS DE JUGADORES
     // ============================
     const players = [
-      { name: "Dani M.",  fullName: "Daniel Martinez", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m" },
-      { name: "Dani A.", fullName: "Daniel Aguayo", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a" },
-      { name: "Yuri", fullName: "Yuri Jimenez", sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg", videoId: "yuri" },
-      { name: "Feli", fullName: "Felipe Rivero", sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg", videoId: "feli" },
-      { name: "Ric", fullName: "Ricardo Bernstein", sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg", videoId: "ric" },
-      { name: "Esteban", fullName: "Esteban Pino", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban" }
+      { name: "Dani M.", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m" },
+      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a" },
+      { name: "Yuri", sets: 3, won: 1, lost: 2, avatar: "img/yuri.jpg", videoId: "yuri" },
+      { name: "Feli", sets: 3, won: 1, lost: 2, avatar: "img/feli.jpg", videoId: "feli" },
+      { name: "Ric", sets: 0, won: 0, lost: 0, avatar: "img/ric.jpg", videoId: "ric" },
+      { name: "Esteban", sets: 0, won: 0, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban" }
     ];
     // ============================
 
-    // Sistema de video - Simple y directo
     let currentVideo = null;
 
     function showPlayerVideo(videoId) {
-      // Pausar y ocultar video anterior
       if (currentVideo) {
         currentVideo.pause();
         currentVideo.currentTime = 0;
         currentVideo.classList.remove('active');
       }
       
-      // Mostrar y reproducir nuevo video
       const video = document.getElementById(`video-${videoId}`);
       if (video) {
         video.classList.add('active');
         video.currentTime = 0;
-        video.play().catch(e => console.log('Autoplay prevented:', e));
+        video.play().catch(e => console.log('Video error:', e));
         currentVideo = video;
       }
     }
@@ -573,7 +572,11 @@
       }
     }
 
-    // Funciones de utilidad
+    function addHoverEvents(element, videoId) {
+      element.addEventListener('mouseenter', () => showPlayerVideo(videoId));
+      element.addEventListener('mouseleave', hideAllVideos);
+    }
+
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
     const points = p => Number(p.won) || 0;
     const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
@@ -582,12 +585,6 @@
       if (pct >= 67) return { text: "Elite", cls: "elite" };
       if (pct >= 34) return { text: "En pelea", cls: "fight" };
       return { text: "Remontar", cls: "comeback" };
-    }
-
-    // Función para agregar eventos de hover
-    function addHoverEvents(element, videoId) {
-      element.addEventListener('mouseenter', () => showPlayerVideo(videoId));
-      element.addEventListener('mouseleave', hideAllVideos);
     }
 
     function renderPodium(sorted){
@@ -612,7 +609,7 @@
           <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}">
             <div class="podiumTop">
               <div class="podiumAvatar" data-video-id="${p.videoId}">
-                <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
+                <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
               </div>
               <span class="podiumMedal ${medalClass}">${realRank}</span>
             </div>
@@ -625,32 +622,23 @@
                 <span class="badge ${m.cls}">${m.text}</span>
                 <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
               </div>
-              <div class="bar" aria-label="Rendimiento ${pct}%">
-                <span style="--w:${pct}%"></span>
-              </div>
+              <div class="bar"><span style="--w:${pct}%"></span></div>
             </div>
           </div>
         `;
       }).join("");
 
-      // Agregar event listeners para el podio (nombre y avatar)
       podium.querySelectorAll('[data-video-id]').forEach(el => {
         addHoverEvents(el, el.dataset.videoId);
       });
     }
 
-    // Ordenamiento
     const sorted = [...players].sort((a,b) =>
-      points(b) - points(a) ||
-      perf(b) - perf(a) ||
-      String(a.name || "").localeCompare(String(b.name || ""))
+      points(b) - points(a) || perf(b) - perf(a) || String(a.name || "").localeCompare(String(b.name || ""))
     );
 
-    document.getElementById("totalSets").textContent =
-      players.reduce((s,p)=>s+Number(p.sets||0),0);
-
-    document.getElementById("totalWins").textContent =
-      players.reduce((s,p)=>s+Number(p.won||0),0);
+    document.getElementById("totalSets").textContent = players.reduce((s,p)=>s+Number(p.sets||0),0);
+    document.getElementById("totalWins").textContent = players.reduce((s,p)=>s+Number(p.won||0),0);
 
     renderPodium(sorted);
 
@@ -670,7 +658,7 @@
         <div class="left">
           <div class="rank">#${idx+1}</div>
           <div class="avatar" data-video-id="${p.videoId}">
-            <img src="${p.avatar}" alt="Foto de ${p.name}" onerror="this.style.display='none'">
+            <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
           </div>
           <div class="nameBlock">
             <div class="nameLine">
@@ -682,9 +670,7 @@
                 ${p.won}G · ${p.lost}P
               </span>
             </div>
-            <div class="bar" aria-label="Rendimiento ${pct}%">
-              <span style="--w:${pct}%"></span>
-            </div>
+            <div class="bar"><span style="--w:${pct}%"></span></div>
           </div>
         </div>
 
@@ -696,7 +682,6 @@
         </div>
       `;
 
-      // Agregar event listeners para las tarjetas (nombre y avatar)
       card.querySelectorAll('[data-video-id]').forEach(el => {
         addHoverEvents(el, el.dataset.videoId);
       });
