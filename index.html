@@ -30,104 +30,21 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      /* DEGRADADO: hasta 50% y luego negro puro */
+      /* DEGRADADO: hasta 65% y luego negro puro */
       background: linear-gradient(
         90deg, 
         var(--bg1) 0%, 
-        #0a0e1d 12%,
-        #080c18 25%,
-        #060a14 35%,
-        #040710 45%,
-        #000000 50%,
+        #0a0e1d 15%,
+        #080c18 30%,
+        #060a14 45%,
+        #040710 55%,
+        #020408 62%,
+        #000000 65%,
         #000000 100%
       );
       background-color: #000000;
       min-height:100vh;
       overflow-x: hidden;
-    }
-
-    /* Noise overlay para eliminar banding */
-    .noise-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      opacity: 0.03;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-    }
-
-    /* ===== Parallax Background ===== */
-    .parallax-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 50%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .parallax-layer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.15s ease-out;
-    }
-
-    /* Capas con animación continua */
-    .parallax-layer-1 {
-      background: radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%);
-      animation: floatLayer1 20s ease-in-out infinite;
-    }
-
-    .parallax-layer-2 {
-      background: radial-gradient(900px 450px at 70% 25%, rgba(34,211,238,.15), transparent 55%);
-      animation: floatLayer2 25s ease-in-out infinite;
-    }
-
-    .parallax-layer-3 {
-      background: radial-gradient(900px 450px at 40% 85%, rgba(52,211,153,.10), transparent 55%);
-      animation: floatLayer3 22s ease-in-out infinite;
-    }
-
-    /* Animaciones para las capas del fondo */
-    @keyframes floatLayer1 {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-      25% { transform: translate(30px, -20px) scale(1.05); opacity: 1; }
-      50% { transform: translate(-20px, 30px) scale(0.98); opacity: 0.9; }
-      75% { transform: translate(15px, 15px) scale(1.02); opacity: 0.85; }
-    }
-
-    @keyframes floatLayer2 {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-      33% { transform: translate(-40px, 25px) scale(1.08); opacity: 0.9; }
-      66% { transform: translate(25px, -30px) scale(0.95); opacity: 0.75; }
-    }
-
-    @keyframes floatLayer3 {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-      50% { transform: translate(35px, -25px) scale(1.1); opacity: 0.85; }
-    }
-
-    /* Luz ambiental animada extra */
-    .ambient-glow {
-      position: fixed;
-      top: -30%;
-      left: -10%;
-      width: 50%;
-      height: 80%;
-      background: radial-gradient(ellipse, rgba(124,92,255,0.08) 0%, transparent 60%);
-      animation: ambientMove 18s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes ambientMove {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(8%, 5%) rotate(8deg); }
-      66% { transform: translate(-5%, -3%) rotate(-5deg); }
     }
 
     .main-container {
@@ -251,15 +168,14 @@
       box-shadow: 0 0 10px rgba(124,92,255,.5);
     }
 
-    /* ===== Podio Top 3 - ESCALONADO ===== */
+    /* ===== Podio Top 3 - ESCALONADO DESDE ABAJO ===== */
     .podium{
-      display:grid;
+      display: grid;
       grid-template-columns: 1fr 1.15fr 1fr;
-      gap:12px;
+      gap: 12px;
       margin-top: 14px;
       margin-bottom: 12px;
-      padding-top: 40px;
-      align-items: end;
+      align-items: flex-end; /* CLAVE: alinea desde abajo */
     }
 
     .podiumCard{
@@ -307,42 +223,38 @@
       opacity: 1;
     }
 
-    /* Primer lugar: centrado, más arriba, ligeramente más pequeño */
-    .podiumBig{ 
-      transform: translateY(-35px) scale(0.97);
-    }
-
-    /* Segundo lugar: un poco más arriba */
-    .podiumCard.rank2 {
-      transform: translateY(-12px);
-    }
-
-    /* Tercer lugar: nivel base */
-    .podiumCard.rank3 {
-      transform: translateY(0px);
-    }
-
-    /* Primer lugar sin glow pulsante */
+    /* ===== ALTURAS DEL PODIO - Como podio real ===== */
+    /* Primer lugar: MÁS ALTO */
     .podiumCard.rank1 {
+      min-height: 220px;
       border-color: rgba(255,215,0,.25);
-      animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards;
     }
 
-    /* Hover states con escalonado mantenido */
+    /* Segundo lugar: ALTURA MEDIA */
+    .podiumCard.rank2 {
+      min-height: 185px;
+    }
+
+    /* Tercer lugar: MÁS BAJO */
+    .podiumCard.rank3 {
+      min-height: 160px;
+    }
+
+    /* Hover states */
     .podiumCard.rank1:hover {
-      transform: translateY(-38px) scale(0.99);
+      transform: translateY(-4px);
       border-color: rgba(255,215,0,.50);
       background: linear-gradient(180deg, rgba(255,215,0,.12), rgba(255,255,255,.06));
     }
 
     .podiumCard.rank2:hover {
-      transform: translateY(-15px);
+      transform: translateY(-4px);
       border-color: rgba(192,192,192,.50);
       background: linear-gradient(180deg, rgba(192,192,192,.12), rgba(255,255,255,.06));
     }
 
     .podiumCard.rank3:hover {
-      transform: translateY(-3px);
+      transform: translateY(-4px);
       border-color: rgba(205,127,50,.50);
       background: linear-gradient(180deg, rgba(205,127,50,.12), rgba(255,255,255,.06));
     }
@@ -618,10 +530,12 @@
     }
 
     @media (max-width: 860px){
-      .podium{ grid-template-columns: 1fr; padding-top: 0; }
-      .podiumBig{ transform:none; }
-      .podiumCard.rank2 { transform: none; }
-      .podiumCard.rank3 { transform: none; }
+      .podium{ grid-template-columns: 1fr; }
+      .podiumCard.rank1,
+      .podiumCard.rank2,
+      .podiumCard.rank3 {
+        min-height: auto;
+      }
     }
 
     /* ===== Lista ===== */
@@ -837,9 +751,6 @@
         max-width: 100%;
         order: 1;
       }
-      .parallax-bg {
-        width: 100%;
-      }
     }
 
     @media (max-width: 720px){
@@ -879,19 +790,6 @@
 </head>
 
 <body>
-  <!-- Noise overlay para eliminar banding -->
-  <div class="noise-overlay"></div>
-
-  <!-- Parallax Background (solo lado izquierdo) -->
-  <div class="parallax-bg">
-    <div class="parallax-layer parallax-layer-1" data-speed="0.02"></div>
-    <div class="parallax-layer parallax-layer-2" data-speed="0.035"></div>
-    <div class="parallax-layer parallax-layer-3" data-speed="0.025"></div>
-  </div>
-
-  <!-- Luz ambiental animada -->
-  <div class="ambient-glow"></div>
-
   <div class="main-container">
     <div class="wrap">
       <header>
@@ -964,18 +862,11 @@
     // ║  Modifica estos valores cada vez que haya nuevos resultados    ║
     // ╚════════════════════════════════════════════════════════════════╝
 
-    const TOTAL_TOURNAMENT_SETS = 45;        // Total de sets del torneo
-    const SETS_PLAYED = 6;                   // Sets jugados hasta ahora
-    const LAST_UPDATE = "19-01-2026";        // Fecha última actualización
+    const TOTAL_TOURNAMENT_SETS = 45;
+    const SETS_PLAYED = 6;
+    const LAST_UPDATE = "19-01-2026";
 
     const players = [
-      //        nombre visualmente en el ranking
-      //        |          sets jugados por el jugador
-      //        |          |  sets ganados (= PUNTOS)
-      //        |          |  |  sets perdidos
-      //        |          |  |  |  foto del jugador
-      //        |          |  |  |  |                   ID del video
-      //        |          |  |  |  |                   |            escala del video
       { name: "Dani M.",   sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg",   videoId: "dani-m",   videoScale: 1.0 },
       { name: "Dani A.",   sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg",   videoId: "dani-a",   videoScale: 1.0 },
       { name: "Yuri",      sets: 6, won: 2, lost: 4, avatar: "img/yuri.jpg",     videoId: "yuri",     videoScale: 1.0 },
@@ -989,22 +880,6 @@
     // ╚════════════════════════════════════════════════════════════════╝
 
     let currentVideo = null;
-
-    // ============================
-    // PARALLAX EFFECT
-    // ============================
-    document.addEventListener('mousemove', (e) => {
-      const layers = document.querySelectorAll('.parallax-layer');
-      const mouseX = e.clientX / window.innerWidth - 0.5;
-      const mouseY = e.clientY / window.innerHeight - 0.5;
-
-      layers.forEach(layer => {
-        const speed = parseFloat(layer.dataset.speed) || 0.02;
-        const x = mouseX * speed * 1000;
-        const y = mouseY * speed * 1000;
-        layer.style.transform = `translate(${x}px, ${y}px)`;
-      });
-    });
 
     // ============================
     // COUNT-UP ANIMATION
@@ -1242,7 +1117,7 @@
       if (!podium) return;
 
       const top3 = sorted.slice(0,3);
-      const order = [1,0,2];
+      const order = [1,0,2]; // 2do, 1ro, 3ro (orden visual)
       const mapped = order.map(i => top3[i]).filter(Boolean);
 
       podium.innerHTML = mapped.map(p => {
@@ -1251,12 +1126,11 @@
         const m = medalLabel(pct);
 
         const realRank = (p === top3[0]) ? 1 : (p === top3[1]) ? 2 : 3;
-        const big = realRank === 1 ? "podiumBig" : "";
         const medalClass = realRank === 1 ? "medalGold" : realRank === 2 ? "medalSilver" : "medalBronze";
         const rankClass = realRank === 1 ? "rank1" : realRank === 2 ? "rank2" : "rank3";
 
         return `
-          <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
+          <div class="podiumCard ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
             <canvas class="particle-canvas" data-rank="${realRank}"></canvas>
             
             <div class="podiumTop">
