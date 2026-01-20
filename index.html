@@ -30,7 +30,7 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      /* DEGRADADO MODIFICADO: hasta 50% y luego negro puro */
+      /* DEGRADADO: hasta 50% y luego negro puro */
       background: linear-gradient(
         90deg, 
         var(--bg1) 0%, 
@@ -62,7 +62,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 50%; /* REDUCIDO: ahora solo cubre hasta el 50% */
+      width: 50%;
       height: 100%;
       pointer-events: none;
       z-index: 0;
@@ -116,7 +116,7 @@
       position: fixed;
       top: -30%;
       left: -10%;
-      width: 50%; /* REDUCIDO: ahora solo cubre hasta el 50% */
+      width: 50%;
       height: 80%;
       background: radial-gradient(ellipse, rgba(124,92,255,0.08) 0%, transparent 60%);
       animation: ambientMove 18s ease-in-out infinite;
@@ -136,7 +136,6 @@
       margin: 0 auto;
       padding: 28px 18px 40px;
       position: relative;
-      
     }
 
     .wrap{ 
@@ -252,13 +251,15 @@
       box-shadow: 0 0 10px rgba(124,92,255,.5);
     }
 
-    /* ===== Podio Top 3 ===== */
+    /* ===== Podio Top 3 - ESCALONADO ===== */
     .podium{
       display:grid;
       grid-template-columns: 1fr 1.15fr 1fr;
       gap:12px;
       margin-top: 14px;
       margin-bottom: 12px;
+      padding-top: 40px;
+      align-items: end;
     }
 
     .podiumCard{
@@ -271,7 +272,7 @@
       position: relative;
       overflow:hidden;
       cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      transition: transform 0.3s cubic-bezier(.2,.9,.2,1), border-color 0.2s ease, background 0.2s ease;
       opacity: 0;
       animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards;
     }
@@ -291,12 +292,6 @@
       }
     }
 
-    .podiumCard:hover {
-      transform: translateY(-3px);
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(180deg, rgba(124,92,255,.15), rgba(255,255,255,.06));
-    }
-
     /* Canvas de partículas para el podio */
     .particle-canvas {
       position: absolute;
@@ -312,24 +307,42 @@
       opacity: 1;
     }
 
-    /* CAMBIO #3: Primer lugar SIN glow pulsante - solo entrada normal */
+    /* Primer lugar: centrado, más arriba, ligeramente más pequeño */
+    .podiumBig{ 
+      transform: translateY(-35px) scale(0.97);
+    }
+
+    /* Segundo lugar: un poco más arriba */
+    .podiumCard.rank2 {
+      transform: translateY(-12px);
+    }
+
+    /* Tercer lugar: nivel base */
+    .podiumCard.rank3 {
+      transform: translateY(0px);
+    }
+
+    /* Primer lugar sin glow pulsante */
     .podiumCard.rank1 {
       border-color: rgba(255,215,0,.25);
-      /* Solo la animación de entrada, sin goldGlow */
       animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards;
     }
 
+    /* Hover states con escalonado mantenido */
     .podiumCard.rank1:hover {
+      transform: translateY(-38px) scale(0.99);
       border-color: rgba(255,215,0,.50);
       background: linear-gradient(180deg, rgba(255,215,0,.12), rgba(255,255,255,.06));
     }
 
     .podiumCard.rank2:hover {
+      transform: translateY(-15px);
       border-color: rgba(192,192,192,.50);
       background: linear-gradient(180deg, rgba(192,192,192,.12), rgba(255,255,255,.06));
     }
 
     .podiumCard.rank3:hover {
+      transform: translateY(-3px);
       border-color: rgba(205,127,50,.50);
       background: linear-gradient(180deg, rgba(205,127,50,.12), rgba(255,255,255,.06));
     }
@@ -432,7 +445,7 @@
       );
     }
 
-    /* Borde plateado METÁLICO para #2 - SIN animación */
+    /* Borde plateado METÁLICO para #2 */
     .podiumCard.rank2 .podiumAvatar::before {
       background: conic-gradient(
         from 0deg,
@@ -470,7 +483,6 @@
       transform: scale(1.05);
     }
 
-    .podiumBig{ transform: translateY(-6px); }
     .podiumCard.rank1 .podiumAvatar{
       width: 74px;
       height: 74px;
@@ -480,7 +492,7 @@
       box-shadow: 0 0 20px rgba(255,215,0,.4), 0 0 40px rgba(255,215,0,.2);
     }
 
-    /* CAMBIO #1: Medallas del podio SIN animación */
+    /* Medallas del podio */
     .podiumMedal{
       width: 42px;
       height: 42px;
@@ -499,7 +511,7 @@
       box-shadow: 0 0 0 4px rgba(255,215,0,.08), 0 25px 60px rgba(255,215,0,.12);
     }
 
-    /* Medal plateada METÁLICA - SIN animación */
+    /* Medal plateada METÁLICA - con número más oscuro */
     .medalSilver{
       background: linear-gradient(
         135deg,
@@ -519,6 +531,8 @@
         inset 0 1px 2px rgba(255,255,255,0.8),
         inset 0 -1px 2px rgba(0,0,0,0.1);
       border: 1px solid rgba(255,255,255,0.4);
+      color: #3a3a3a;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.5);
     }
 
     .medalBronze{
@@ -553,7 +567,7 @@
       font-size: 12px;
     }
 
-    /* CAMBIO #1: Badge de puntos UNIFORME para todo el podio - sin colores especiales */
+    /* Badge de puntos UNIFORME para todo el podio */
     .points-badge{
       font-family: var(--mono);
       font-size: 13px;
@@ -565,7 +579,6 @@
       box-shadow: 0 4px 15px rgba(124,92,255,.35);
     }
 
-    /* Todos los lugares del podio usan el mismo estilo de puntos */
     .podiumCard.rank1 .points-badge,
     .podiumCard.rank2 .points-badge,
     .podiumCard.rank3 .points-badge {
@@ -605,8 +618,10 @@
     }
 
     @media (max-width: 860px){
-      .podium{ grid-template-columns: 1fr; }
+      .podium{ grid-template-columns: 1fr; padding-top: 0; }
       .podiumBig{ transform:none; }
+      .podiumCard.rank2 { transform: none; }
+      .podiumCard.rank3 { transform: none; }
     }
 
     /* ===== Lista ===== */
@@ -1016,9 +1031,7 @@
     }
 
     // ============================
-    // SISTEMA DE PARTÍCULAS (MEJORADO)
-    // - Más difuminadas (blur aumentado)
-    // - Más lentas (velocidad reducida)
+    // SISTEMA DE PARTÍCULAS
     // ============================
     class ParticleSystem {
       constructor(canvas, color) {
@@ -1042,9 +1055,7 @@
         return {
           x: Math.random() * this.canvas.width,
           y: -10,
-          // CAMBIO #2: Partículas más pequeñas para mejor difuminado
           size: Math.random() * 2 + 0.5,
-          // CAMBIO #2: Velocidad más lenta
           speedY: Math.random() * 0.6 + 0.2,
           speedX: (Math.random() - 0.5) * 0.3,
           opacity: Math.random() * 0.5 + 0.15,
@@ -1052,7 +1063,6 @@
           rotationSpeed: (Math.random() - 0.5) * 1.5,
           type: Math.random() > 0.4 ? 'sparkle' : 'snow',
           wobble: Math.random() * Math.PI * 2,
-          // CAMBIO #2: Wobble más lento
           wobbleSpeed: Math.random() * 0.02 + 0.008
         };
       }
@@ -1063,7 +1073,6 @@
         this.ctx.rotate(p.rotation * Math.PI / 180);
         this.ctx.globalAlpha = p.opacity;
         
-        // Estrella de 4 puntas
         this.ctx.beginPath();
         const spikes = 4;
         const outerRadius = p.size * 2;
@@ -1081,7 +1090,6 @@
         
         this.ctx.closePath();
         this.ctx.fillStyle = this.color;
-        // CAMBIO #2: Blur aumentado para más difuminado
         this.ctx.shadowBlur = 12;
         this.ctx.shadowColor = this.color;
         this.ctx.fill();
@@ -1095,7 +1103,6 @@
         this.ctx.beginPath();
         this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
-        // CAMBIO #2: Blur aumentado para más difuminado
         this.ctx.shadowBlur = 10;
         this.ctx.shadowColor = this.color;
         this.ctx.fill();
@@ -1107,34 +1114,28 @@
         
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // CAMBIO #2: Menos partículas generadas (más espaciadas)
         if (this.particles.length < 30 && Math.random() > 0.92) {
           this.particles.push(this.createParticle());
         }
         
-        // Actualizar y dibujar partículas
         for (let i = this.particles.length - 1; i >= 0; i--) {
           const p = this.particles[i];
           
-          // Movimiento con wobble
           p.wobble += p.wobbleSpeed;
           p.x += p.speedX + Math.sin(p.wobble) * 0.25;
           p.y += p.speedY;
           p.rotation += p.rotationSpeed;
           
-          // Fade out más gradual cerca del fondo
           if (p.y > this.canvas.height - 60) {
             p.opacity -= 0.015;
           }
           
-          // Dibujar según tipo
           if (p.type === 'sparkle') {
             this.drawSparkle(p);
           } else {
             this.drawSnow(p);
           }
           
-          // Eliminar si fuera de pantalla o invisible
           if (p.y > this.canvas.height || p.opacity <= 0) {
             this.particles.splice(i, 1);
           }
@@ -1155,7 +1156,6 @@
         if (this.animationId) {
           cancelAnimationFrame(this.animationId);
         }
-        // Fade out más suave de partículas existentes
         const fadeOut = () => {
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
           let hasParticles = false;
@@ -1185,11 +1185,10 @@
       }
     }
 
-    // Colores de partículas para cada posición
     const particleColors = {
-      1: '#ffd700', // Dorado
-      2: '#e8e8e8', // Plateado
-      3: '#cd7f32'  // Bronce
+      1: '#ffd700',
+      2: '#e8e8e8',
+      3: '#cd7f32'
     };
 
     function showPlayerVideo(videoId) {
@@ -1258,7 +1257,6 @@
 
         return `
           <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
-            <!-- Canvas de partículas -->
             <canvas class="particle-canvas" data-rank="${realRank}"></canvas>
             
             <div class="podiumTop">
@@ -1282,7 +1280,6 @@
         `;
       }).join("");
 
-      // Inicializar sistema de partículas para cada card del podio
       podium.querySelectorAll('.podiumCard').forEach(card => {
         const videoId = card.dataset.videoId;
         const rank = parseInt(card.dataset.rank);
@@ -1313,10 +1310,8 @@
       points(b) - points(a) || perf(b) - perf(a) || String(a.name || "").localeCompare(String(b.name || ""))
     );
 
-    // Set last update
     document.getElementById("lastUpdate").textContent = LAST_UPDATE;
 
-    // Animate header stats
     const progressPercent = Math.round((SETS_PLAYED / TOTAL_TOURNAMENT_SETS) * 100);
     
     setTimeout(() => {
@@ -1383,7 +1378,6 @@
       });
     }, 700);
 
-    // Resize particles on window resize
     window.addEventListener('resize', () => {
       document.querySelectorAll('.particle-canvas').forEach(canvas => {
         if (canvas.particleSystem) {
