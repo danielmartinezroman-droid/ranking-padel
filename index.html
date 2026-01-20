@@ -30,10 +30,31 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 50%, #000000 85%, #000000 100%);
+      /* MEJORA #2: Degradado suavizado sin banding */
+      background: linear-gradient(
+        90deg, 
+        var(--bg1) 0%, 
+        #0a0e1d 20%,
+        #080c18 35%,
+        #060a14 50%,
+        #040710 65%,
+        #02040a 80%,
+        #000000 100%
+      );
       background-color: #000000;
       min-height:100vh;
       overflow-x: hidden;
+    }
+
+    /* MEJORA #2: Noise overlay para eliminar banding */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.03;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
     }
 
     /* ===== Parallax Background ===== */
@@ -55,16 +76,58 @@
       transition: transform 0.15s ease-out;
     }
 
+    /* MEJORA #4: Capas con animación continua */
     .parallax-layer-1 {
       background: radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%);
+      animation: floatLayer1 20s ease-in-out infinite;
     }
 
     .parallax-layer-2 {
       background: radial-gradient(900px 450px at 70% 25%, rgba(34,211,238,.15), transparent 55%);
+      animation: floatLayer2 25s ease-in-out infinite;
     }
 
     .parallax-layer-3 {
       background: radial-gradient(900px 450px at 40% 85%, rgba(52,211,153,.10), transparent 55%);
+      animation: floatLayer3 22s ease-in-out infinite;
+    }
+
+    /* MEJORA #4: Animaciones para las capas del fondo */
+    @keyframes floatLayer1 {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+      25% { transform: translate(30px, -20px) scale(1.05); opacity: 1; }
+      50% { transform: translate(-20px, 30px) scale(0.98); opacity: 0.9; }
+      75% { transform: translate(15px, 15px) scale(1.02); opacity: 0.85; }
+    }
+
+    @keyframes floatLayer2 {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+      33% { transform: translate(-40px, 25px) scale(1.08); opacity: 0.9; }
+      66% { transform: translate(25px, -30px) scale(0.95); opacity: 0.75; }
+    }
+
+    @keyframes floatLayer3 {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+      50% { transform: translate(35px, -25px) scale(1.1); opacity: 0.85; }
+    }
+
+    /* MEJORA #4: Luz ambiental animada extra */
+    .ambient-glow {
+      position: fixed;
+      top: -30%;
+      left: -10%;
+      width: 60%;
+      height: 80%;
+      background: radial-gradient(ellipse, rgba(124,92,255,0.08) 0%, transparent 60%);
+      animation: ambientMove 18s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes ambientMove {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(8%, 5%) rotate(8deg); }
+      66% { transform: translate(-5%, -3%) rotate(-5deg); }
     }
 
     .main-container {
@@ -234,6 +297,21 @@
       background: linear-gradient(180deg, rgba(124,92,255,.15), rgba(255,255,255,.06));
     }
 
+    /* ===== MEJORA #3: Canvas de partículas para el podio ===== */
+    .particle-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .podiumCard:hover .particle-canvas {
+      opacity: 1;
+    }
+
     /* ===== GLOW PULSANTE #1 ===== */
     .podiumCard.rank1 {
       border-color: rgba(255,215,0,.25);
@@ -371,16 +449,21 @@
       );
     }
 
-    /* Borde plateado para #2 */
+    /* ===== MEJORA #1: Borde plateado METÁLICO para #2 ===== */
     .podiumCard.rank2 .podiumAvatar::before {
       background: conic-gradient(
         from 0deg,
-        var(--silver),
-        #E8E8E8,
-        var(--silver),
-        #A0A0A0,
-        var(--silver)
+        #f5f5f5,
+        #e8e8e8,
+        #c0c0c0,
+        #f8f8f8,
+        #ffffff,
+        #d0d0d0,
+        #a8a8a8,
+        #e0e0e0,
+        #f5f5f5
       );
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
     }
 
     /* Borde bronce para #3 */
@@ -430,10 +513,36 @@
       background: radial-gradient(circle at 30% 30%, rgba(255,215,0,.55), rgba(255,255,255,.08) 60%);
       box-shadow: 0 0 0 4px rgba(255,215,0,.08), 0 25px 60px rgba(255,215,0,.12);
     }
+
+    /* ===== MEJORA #1: Medal plateada METÁLICA ===== */
     .medalSilver{
-      background: radial-gradient(circle at 30% 30%, rgba(203,213,225,.55), rgba(255,255,255,.08) 60%);
-      box-shadow: 0 0 0 4px rgba(203,213,225,.10), 0 25px 60px rgba(203,213,225,.10);
+      background: linear-gradient(
+        135deg,
+        #f5f5f5 0%,
+        #e0e0e0 15%,
+        #c8c8c8 30%,
+        #f8f8f8 45%,
+        #ffffff 50%,
+        #e8e8e8 55%,
+        #d0d0d0 70%,
+        #b8b8b8 85%,
+        #e0e0e0 100%
+      );
+      background-size: 200% 200%;
+      animation: silverShimmer 3s ease-in-out infinite;
+      box-shadow: 
+        0 0 0 4px rgba(255,255,255,.15),
+        0 25px 60px rgba(192,192,192,.15),
+        inset 0 1px 2px rgba(255,255,255,0.8),
+        inset 0 -1px 2px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.4);
     }
+
+    @keyframes silverShimmer {
+      0%, 100% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+    }
+
     .medalBronze{
       background: radial-gradient(circle at 30% 30%, rgba(205,127,50,.55), rgba(255,255,255,.08) 60%);
       box-shadow: 0 0 0 4px rgba(205,127,50,.10), 0 25px 60px rgba(205,127,50,.10);
@@ -482,9 +591,34 @@
       box-shadow: 0 4px 15px rgba(255,215,0,.35);
     }
 
+    /* ===== MEJORA #1: Badge de puntos PLATEADO METÁLICO ===== */
     .podiumCard.rank2 .points-badge {
-      background: linear-gradient(135deg, var(--silver), #A0A0A0);
-      box-shadow: 0 4px 15px rgba(192,192,192,.35);
+      background: linear-gradient(
+        135deg,
+        #f5f5f5 0%,
+        #e8e8e8 10%,
+        #c8c8c8 25%,
+        #f8f8f8 40%,
+        #ffffff 50%,
+        #d8d8d8 60%,
+        #b0b0b0 75%,
+        #e0e0e0 90%,
+        #f0f0f0 100%
+      );
+      background-size: 200% 200%;
+      color: #404040;
+      box-shadow: 
+        0 4px 15px rgba(192,192,192,.5),
+        inset 0 1px 3px rgba(255,255,255,0.9),
+        inset 0 -1px 3px rgba(0,0,0,0.1);
+      text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.4);
+      animation: silverBadgeShimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes silverBadgeShimmer {
+      0%, 100% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
     }
 
     .podiumCard.rank3 .points-badge {
@@ -782,12 +916,18 @@
 </head>
 
 <body>
+  <!-- MEJORA #2: Noise overlay para eliminar banding -->
+  <div class="noise-overlay"></div>
+
   <!-- Parallax Background (solo lado izquierdo) -->
   <div class="parallax-bg">
     <div class="parallax-layer parallax-layer-1" data-speed="0.02"></div>
     <div class="parallax-layer parallax-layer-2" data-speed="0.035"></div>
     <div class="parallax-layer parallax-layer-3" data-speed="0.025"></div>
   </div>
+
+  <!-- MEJORA #4: Luz ambiental animada -->
+  <div class="ambient-glow"></div>
 
   <div class="main-container">
     <div class="wrap">
@@ -867,7 +1007,6 @@
 
     const players = [
       //        nombre visualmente en el ranking
-      //        |visualmente en el ranking
       //        |          sets jugados por el jugador
       //        |          |  sets ganados (= PUNTOS)
       //        |          |  |  sets perdidos
@@ -900,6 +1039,7 @@
         const speed = parseFloat(layer.dataset.speed) || 0.02;
         const x = mouseX * speed * 1000;
         const y = mouseY * speed * 1000;
+        // Combina la animación CSS con el movimiento del mouse
         layer.style.transform = `translate(${x}px, ${y}px)`;
       });
     });
@@ -927,6 +1067,176 @@
       
       requestAnimationFrame(update);
     }
+
+    // ============================
+    // MEJORA #3: SISTEMA DE PARTÍCULAS
+    // ============================
+    class ParticleSystem {
+      constructor(canvas, color) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.color = color;
+        this.isActive = false;
+        this.animationId = null;
+        
+        this.resize();
+      }
+
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+      }
+
+      createParticle() {
+        return {
+          x: Math.random() * this.canvas.width,
+          y: -10,
+          size: Math.random() * 2.5 + 0.8,
+          speedY: Math.random() * 1.2 + 0.4,
+          speedX: (Math.random() - 0.5) * 0.6,
+          opacity: Math.random() * 0.8 + 0.2,
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 3,
+          type: Math.random() > 0.4 ? 'sparkle' : 'snow',
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.04 + 0.015
+        };
+      }
+
+      drawSparkle(p) {
+        this.ctx.save();
+        this.ctx.translate(p.x, p.y);
+        this.ctx.rotate(p.rotation * Math.PI / 180);
+        this.ctx.globalAlpha = p.opacity;
+        
+        // Estrella de 4 puntas
+        this.ctx.beginPath();
+        const spikes = 4;
+        const outerRadius = p.size * 2;
+        const innerRadius = p.size * 0.5;
+        
+        for (let i = 0; i < spikes * 2; i++) {
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          const angle = (i * Math.PI) / spikes - Math.PI / 2;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          
+          if (i === 0) this.ctx.moveTo(x, y);
+          else this.ctx.lineTo(x, y);
+        }
+        
+        this.ctx.closePath();
+        this.ctx.fillStyle = this.color;
+        this.ctx.shadowBlur = 8;
+        this.ctx.shadowColor = this.color;
+        this.ctx.fill();
+        
+        this.ctx.restore();
+      }
+
+      drawSnow(p) {
+        this.ctx.save();
+        this.ctx.globalAlpha = p.opacity;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.color;
+        this.ctx.shadowBlur = 6;
+        this.ctx.shadowColor = this.color;
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+
+      update() {
+        if (!this.isActive) return;
+        
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Añadir nuevas partículas
+        if (this.particles.length < 40 && Math.random() > 0.88) {
+          this.particles.push(this.createParticle());
+        }
+        
+        // Actualizar y dibujar partículas
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          
+          // Movimiento con wobble
+          p.wobble += p.wobbleSpeed;
+          p.x += p.speedX + Math.sin(p.wobble) * 0.4;
+          p.y += p.speedY;
+          p.rotation += p.rotationSpeed;
+          
+          // Fade out cerca del fondo
+          if (p.y > this.canvas.height - 40) {
+            p.opacity -= 0.025;
+          }
+          
+          // Dibujar según tipo
+          if (p.type === 'sparkle') {
+            this.drawSparkle(p);
+          } else {
+            this.drawSnow(p);
+          }
+          
+          // Eliminar si fuera de pantalla o invisible
+          if (p.y > this.canvas.height || p.opacity <= 0) {
+            this.particles.splice(i, 1);
+          }
+        }
+        
+        this.animationId = requestAnimationFrame(() => this.update());
+      }
+
+      start() {
+        if (this.isActive) return;
+        this.isActive = true;
+        this.resize();
+        this.update();
+      }
+
+      stop() {
+        this.isActive = false;
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+        // Fade out de partículas existentes
+        const fadeOut = () => {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          let hasParticles = false;
+          
+          for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.opacity -= 0.06;
+            p.y += p.speedY;
+            
+            if (p.opacity > 0) {
+              hasParticles = true;
+              if (p.type === 'sparkle') {
+                this.drawSparkle(p);
+              } else {
+                this.drawSnow(p);
+              }
+            } else {
+              this.particles.splice(i, 1);
+            }
+          }
+          
+          if (hasParticles) {
+            requestAnimationFrame(fadeOut);
+          }
+        };
+        fadeOut();
+      }
+    }
+
+    // Colores de partículas para cada posición
+    const particleColors = {
+      1: '#ffd700', // Dorado
+      2: '#e8e8e8', // Plateado
+      3: '#cd7f32'  // Bronce
+    };
 
     function showPlayerVideo(videoId) {
       if (currentVideo) {
@@ -994,6 +1304,9 @@
 
         return `
           <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
+            <!-- MEJORA #3: Canvas de partículas -->
+            <canvas class="particle-canvas" data-rank="${realRank}"></canvas>
+            
             <div class="podiumTop">
               <div class="podiumAvatar">
                 <img src="${p.avatar}" alt="${p.name}" onerror="this.style.display='none'">
@@ -1015,8 +1328,25 @@
         `;
       }).join("");
 
+      // Inicializar sistema de partículas para cada card del podio
       podium.querySelectorAll('.podiumCard').forEach(card => {
-        addCardHoverEvents(card, card.dataset.videoId);
+        const videoId = card.dataset.videoId;
+        const rank = parseInt(card.dataset.rank);
+        const canvas = card.querySelector('.particle-canvas');
+        
+        if (canvas) {
+          const particleSystem = new ParticleSystem(canvas, particleColors[rank]);
+          
+          card.addEventListener('mouseenter', () => {
+            showPlayerVideo(videoId);
+            particleSystem.start();
+          });
+          
+          card.addEventListener('mouseleave', () => {
+            hideAllVideos();
+            particleSystem.stop();
+          });
+        }
       });
 
       podium.querySelectorAll('.count-up-points').forEach(el => {
@@ -1098,7 +1428,15 @@
         setTimeout(() => animateCountUp(el, target, 800), i * 50);
       });
     }, 700);
+
+    // Resize particles on window resize
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.particle-canvas').forEach(canvas => {
+        if (canvas.particleSystem) {
+          canvas.particleSystem.resize();
+        }
+      });
+    });
   </script>
 </body>
 </html>
-
