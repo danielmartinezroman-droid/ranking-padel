@@ -30,15 +30,15 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      /* Degradado suavizado sin banding */
+      /* DEGRADADO MODIFICADO: hasta 50% y luego negro puro */
       background: linear-gradient(
         90deg, 
         var(--bg1) 0%, 
-        #0a0e1d 20%,
-        #080c18 35%,
-        #060a14 50%,
-        #040710 65%,
-        #02040a 80%,
+        #0a0e1d 12%,
+        #080c18 25%,
+        #060a14 35%,
+        #040710 45%,
+        #000000 50%,
         #000000 100%
       );
       background-color: #000000;
@@ -62,7 +62,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 65%;
+      width: 50%; /* REDUCIDO: ahora solo cubre hasta el 50% */
       height: 100%;
       pointer-events: none;
       z-index: 0;
@@ -116,7 +116,7 @@
       position: fixed;
       top: -30%;
       left: -10%;
-      width: 60%;
+      width: 50%; /* REDUCIDO: ahora solo cubre hasta el 50% */
       height: 80%;
       background: radial-gradient(ellipse, rgba(124,92,255,0.08) 0%, transparent 60%);
       animation: ambientMove 18s ease-in-out infinite;
@@ -407,7 +407,7 @@
       position: absolute;
       inset: -4px;
       border-radius: 999px;
-      z-index: 1;
+      
       animation: rotateBorder 3s linear infinite;
     }
 
