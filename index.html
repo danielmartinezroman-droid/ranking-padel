@@ -451,14 +451,29 @@ body{
     }
 
     /* ===== MOBILE ===== */
-    @media (max-width: 1100px){
-      .video-sidebar {
-        display: none;
-      }
-      .wrap {
-        max-width: 100%;
-      }
-    }
+@media (max-width: 1100px){
+  .main-container {
+    flex-direction: column;
+  }
+  .video-sidebar {
+    position: relative;
+    width: 100%;
+    right: auto;
+    top: auto;
+    transform: none;
+    order: 2; /* Aparece después del contenido */
+    margin-top: 30px;
+  }
+  .video-wrapper {
+    height: 400px;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+  .wrap {
+    max-width: 100%;
+    order: 1;
+  }
+}
 
     @media (max-width: 720px){
       .podiumCard{ padding: 14px; }
@@ -695,5 +710,6 @@ body{
   </script>
 </body>
 </html>
+
 
 
