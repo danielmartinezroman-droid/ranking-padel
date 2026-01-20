@@ -17,28 +17,26 @@
       --good:#34D399;
       --warn:#FBBF24;
       --bad:#FB7185;
+      --gold: #FFD700;
       --radius: 18px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
     *{ box-sizing:border-box; }
-body{
-  margin:0;
-  font-family: var(--sans);
-  color:var(--text);
-  background:
-    /* Degradado de izquierda (azul oscuro) a derecha (negro) */
-    linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 50%, #000000 85%, #000000 100%),
-    /* Los efectos de color solo en la izquierda */
-    radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%),
-    radial-gradient(900px 450px at 50% 20%, rgba(34,211,238,.15), transparent 55%),
-    radial-gradient(900px 450px at 30% 90%, rgba(52,211,153,.10), transparent 55%);
-  background-color: #000000;
-  min-height:100vh;
-}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 50%, #000000 85%, #000000 100%),
+        radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%),
+        radial-gradient(900px 450px at 50% 20%, rgba(34,211,238,.15), transparent 55%),
+        radial-gradient(900px 450px at 30% 90%, rgba(52,211,153,.10), transparent 55%);
+      background-color: #000000;
+      min-height:100vh;
+    }
 
-    /* LAYOUT: Panel centrado + video a la derecha */
     .main-container {
       display: flex;
       max-width: 1500px;
@@ -118,6 +116,44 @@ body{
       width:10px;height:10px;border-radius:50%;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+    }
+
+    /* ===== Progress Chip ===== */
+    .chip.progress-chip {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 10px 14px;
+      min-width: 180px;
+    }
+
+    .progress-chip .progress-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+    }
+
+    .progress-chip .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,.10);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-chip .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width 1.5s cubic-bezier(.2,.9,.2,1);
+      box-shadow: 0 0 10px rgba(124,92,255,.5);
     }
 
     /* ===== Podio Top 3 ===== */
@@ -140,12 +176,58 @@ body{
       overflow:hidden;
       cursor: pointer;
       transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      opacity: 0;
+      animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+
+    .podiumCard:nth-child(1) { animation-delay: 150ms; }
+    .podiumCard:nth-child(2) { animation-delay: 0ms; }
+    .podiumCard:nth-child(3) { animation-delay: 300ms; }
+
+    @keyframes podiumEnter {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.95); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
     }
 
     .podiumCard:hover {
       transform: translateY(-3px);
       border-color: rgba(124,92,255,.45);
       background: linear-gradient(180deg, rgba(124,92,255,.15), rgba(255,255,255,.06));
+    }
+
+    /* ===== GLOW PULSANTE #1 ===== */
+    .podiumCard.rank1 {
+      border-color: rgba(255,215,0,.25);
+      animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards, 
+                 goldGlow 3s ease-in-out infinite 600ms;
+    }
+
+    @keyframes goldGlow {
+      0%, 100% { 
+        box-shadow: 
+          0 18px 55px rgba(0,0,0,.45),
+          0 0 20px rgba(255,215,0,.15),
+          0 0 40px rgba(255,215,0,.08),
+          inset 0 0 30px rgba(255,215,0,.03);
+      }
+      50% { 
+        box-shadow: 
+          0 18px 55px rgba(0,0,0,.45),
+          0 0 35px rgba(255,215,0,.30),
+          0 0 70px rgba(255,215,0,.15),
+          inset 0 0 50px rgba(255,215,0,.06);
+      }
+    }
+
+    .podiumCard.rank1:hover {
+      border-color: rgba(255,215,0,.50);
+      background: linear-gradient(180deg, rgba(255,215,0,.12), rgba(255,255,255,.06));
     }
 
     .podiumCard::before{
@@ -157,6 +239,11 @@ body{
       filter: blur(18px);
       background: radial-gradient(circle at 20% 15%, rgba(124,92,255,.45), transparent 55%),
                   radial-gradient(circle at 80% 25%, rgba(34,211,238,.32), transparent 55%);
+    }
+
+    .podiumCard.rank1::before {
+      background: radial-gradient(circle at 20% 15%, rgba(255,215,0,.50), transparent 55%),
+                  radial-gradient(circle at 80% 25%, rgba(255,180,0,.35), transparent 55%);
     }
 
     .podiumCard::after{
@@ -201,6 +288,9 @@ body{
     .podiumCard:hover .podiumAvatar {
       transform: scale(1.05);
       border-color: var(--accent2);
+    }
+    .podiumCard.rank1:hover .podiumAvatar {
+      border-color: var(--gold);
     }
     .podiumAvatar img{
       width:100%;
@@ -251,6 +341,9 @@ body{
     .podiumCard:hover .podiumName strong {
       color: var(--accent2);
     }
+    .podiumCard.rank1:hover .podiumName strong {
+      color: var(--gold);
+    }
     .podiumMeta{
       display:flex;
       gap:8px;
@@ -271,13 +364,48 @@ body{
       box-shadow: 0 4px 15px rgba(124,92,255,.35);
     }
 
+    .podiumCard.rank1 .points-badge {
+      background: linear-gradient(135deg, var(--gold), #FFA500);
+      box-shadow: 0 4px 15px rgba(255,215,0,.35);
+    }
+
+    /* ===== Separador ===== */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0 18px;
+      opacity: 0;
+      animation: fadeIn 500ms ease forwards 400ms;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-divider .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,92,255,.4), rgba(34,211,238,.3), transparent);
+    }
+
+    .section-divider .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     @media (max-width: 860px){
       .podium{ grid-template-columns: 1fr; }
       .podiumBig{ transform:none; }
     }
 
     /* ===== Lista ===== */
-    #list{ display:flex; flex-direction:column; gap:12px; margin-top: 14px; }
+    #list{ display:flex; flex-direction:column; gap:12px; }
 
     .card{
       position: relative; overflow: hidden;
@@ -450,30 +578,35 @@ body{
       flex-wrap:wrap;
     }
 
+    /* ===== Count-up ===== */
+    .count-up {
+      display: inline-block;
+    }
+
     /* ===== MOBILE ===== */
-@media (max-width: 1100px){
-  .main-container {
-    flex-direction: column;
-  }
-  .video-sidebar {
-    position: relative;
-    width: 100%;
-    right: auto;
-    top: auto;
-    transform: none;
-    order: 2; /* Aparece después del contenido */
-    margin-top: 30px;
-  }
-  .video-wrapper {
-    height: 400px;
-    max-width: 350px;
-    margin: 0 auto;
-  }
-  .wrap {
-    max-width: 100%;
-    order: 1;
-  }
-}
+    @media (max-width: 1100px){
+      .main-container {
+        flex-direction: column;
+      }
+      .video-sidebar {
+        position: relative;
+        width: 100%;
+        right: auto;
+        top: auto;
+        transform: none;
+        order: 2;
+        margin-top: 30px;
+      }
+      .video-wrapper {
+        height: 400px;
+        max-width: 350px;
+        margin: 0 auto;
+      }
+      .wrap {
+        max-width: 100%;
+        order: 1;
+      }
+    }
 
     @media (max-width: 720px){
       .podiumCard{ padding: 14px; }
@@ -498,6 +631,10 @@ body{
         flex: 1 1 auto;
         justify-content: center;
       }
+      
+      .chip.progress-chip {
+        min-width: unset;
+      }
     }
   </style>
 </head>
@@ -512,12 +649,28 @@ body{
         </div>
         <div class="chips">
           <div class="chip"><span class="dot"></span> Estado: <b>En curso</b></div>
-          <div class="chip">Sets totales jugados: <b id="totalSets">-</b></div>
-          <div class="chip">Partidos ganados: <b id="totalWins">-</b></div>
+          <div class="chip">Sets jugados: <b><span id="totalSets" class="count-up">0</span>/45</b></div>
+          <div class="chip progress-chip">
+            <div class="progress-header">
+              <span>Avance del torneo</span>
+              <b><span id="progressPercent" class="count-up">0</span>%</b>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+          </div>
         </div>
       </header>
 
       <div id="podium" class="podium"></div>
+      
+      <!-- Separador -->
+      <div class="section-divider">
+        <div class="line"></div>
+        <span class="label">Clasificación General</span>
+        <div class="line"></div>
+      </div>
+      
       <div id="list"></div>
 
       <div class="footer">
@@ -563,9 +716,37 @@ body{
       { name: "Ric", sets: 3, won: 1, lost: 2, avatar: "img/ric.jpg", videoId: "ric" },
       { name: "Esteban", sets: 3, won: 3, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban" }
     ];
+
+    const TOTAL_TOURNAMENT_SETS = 45;
+    const SETS_PLAYED = 6;
     // ============================
 
     let currentVideo = null;
+
+    // ============================
+    // COUNT-UP ANIMATION
+    // ============================
+    function animateCountUp(element, target, duration = 1500, suffix = '') {
+      const start = 0;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function (ease-out)
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * easeOut);
+        
+        element.textContent = current + suffix;
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
 
     function showPlayerVideo(videoId) {
       if (currentVideo) {
@@ -637,7 +818,7 @@ body{
             <div class="podiumName">
               <strong>${p.name}</strong>
               <div class="podiumMeta">
-                <span class="points-badge">${pts} pts</span>
+                <span class="points-badge"><span class="count-up-points" data-target="${pts}">0</span> pts</span>
                 <span class="badge ${badgeClass(pct)}">${pct}%</span>
                 <span class="badge ${m.cls}">${m.text}</span>
                 <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
@@ -651,14 +832,30 @@ body{
       podium.querySelectorAll('.podiumCard').forEach(card => {
         addCardHoverEvents(card, card.dataset.videoId);
       });
+
+      // Animate points in podium
+      podium.querySelectorAll('.count-up-points').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        setTimeout(() => animateCountUp(el, target, 1200), 300);
+      });
     }
 
     const sorted = [...players].sort((a,b) =>
       points(b) - points(a) || perf(b) - perf(a) || String(a.name || "").localeCompare(String(b.name || ""))
     );
 
-    document.getElementById("totalSets").textContent = players.reduce((s,p)=>s+Number(p.sets||0),0);
-    document.getElementById("totalWins").textContent = players.reduce((s,p)=>s+Number(p.won||0),0);
+    // Animate header stats
+    const progressPercent = Math.round((SETS_PLAYED / TOTAL_TOURNAMENT_SETS) * 100);
+    
+    setTimeout(() => {
+      animateCountUp(document.getElementById("totalSets"), SETS_PLAYED, 1500);
+      animateCountUp(document.getElementById("progressPercent"), progressPercent, 1500);
+      
+      // Animate progress bar
+      setTimeout(() => {
+        document.getElementById("progressFill").style.width = progressPercent + "%";
+      }, 100);
+    }, 200);
 
     renderPodium(sorted);
 
@@ -672,7 +869,7 @@ body{
 
       const card = document.createElement("div");
       card.className = "card " + m.cls;
-      card.style.animationDelay = (idx * 70) + "ms";
+      card.style.animationDelay = (idx * 70 + 500) + "ms";
       card.dataset.videoId = p.videoId;
 
       card.innerHTML = `
@@ -684,7 +881,7 @@ body{
           <div class="nameBlock">
             <div class="nameLine">
               <strong>${p.name}</strong>
-              <span class="points-badge">${pts} pts</span>
+              <span class="points-badge"><span class="count-up-points" data-target="${pts}">0</span> pts</span>
               <span class="badge ${badgeClass(pct)}">${pct}%</span>
               <span class="badge ${m.cls}">${m.text}</span>
               <span style="color: rgba(255,255,255,.55); font-size:12px; font-family: var(--mono);">
@@ -696,7 +893,7 @@ body{
         </div>
 
         <div class="right">
-          <div class="pill points">Puntos: <b>${pts}</b></div>
+          <div class="pill points">Puntos: <b class="count-up-points" data-target="${pts}">0</b></div>
           <div class="pill">Sets: <b>${p.sets}</b></div>
           <div class="pill">Ganados: <b>${p.won}</b></div>
           <div class="pill">Perdidos: <b>${p.lost}</b></div>
@@ -707,9 +904,14 @@ body{
 
       list.appendChild(card);
     });
+
+    // Animate all points in list after cards appear
+    setTimeout(() => {
+      list.querySelectorAll('.count-up-points').forEach((el, i) => {
+        const target = parseInt(el.dataset.target);
+        setTimeout(() => animateCountUp(el, target, 800), i * 50);
+      });
+    }, 700);
   </script>
 </body>
 </html>
-
-
-
