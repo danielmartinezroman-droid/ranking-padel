@@ -18,6 +18,8 @@
       --warn:#FBBF24;
       --bad:#FB7185;
       --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
       --radius: 18px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -28,13 +30,41 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      background:
-        linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 50%, #000000 85%, #000000 100%),
-        radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%),
-        radial-gradient(900px 450px at 50% 20%, rgba(34,211,238,.15), transparent 55%),
-        radial-gradient(900px 450px at 30% 90%, rgba(52,211,153,.10), transparent 55%);
+      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 50%, #000000 85%, #000000 100%);
       background-color: #000000;
       min-height:100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== Parallax Background ===== */
+    .parallax-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 65%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.15s ease-out;
+    }
+
+    .parallax-layer-1 {
+      background: radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%);
+    }
+
+    .parallax-layer-2 {
+      background: radial-gradient(900px 450px at 70% 25%, rgba(34,211,238,.15), transparent 55%);
+    }
+
+    .parallax-layer-3 {
+      background: radial-gradient(900px 450px at 40% 85%, rgba(52,211,153,.10), transparent 55%);
     }
 
     .main-container {
@@ -42,6 +72,8 @@
       max-width: 1500px;
       margin: 0 auto;
       padding: 28px 18px 40px;
+      position: relative;
+      
     }
 
     .wrap{ 
@@ -231,6 +263,16 @@
       background: linear-gradient(180deg, rgba(255,215,0,.12), rgba(255,255,255,.06));
     }
 
+    .podiumCard.rank2:hover {
+      border-color: rgba(192,192,192,.50);
+      background: linear-gradient(180deg, rgba(192,192,192,.12), rgba(255,255,255,.06));
+    }
+
+    .podiumCard.rank3:hover {
+      border-color: rgba(205,127,50,.50);
+      background: linear-gradient(180deg, rgba(205,127,50,.12), rgba(255,255,255,.06));
+    }
+
     .podiumCard::before{
       content:"";
       position:absolute;
@@ -275,37 +317,101 @@
       margin-bottom: 10px;
     }
 
+    /* ===== AVATAR CON BORDE ANIMADO ===== */
     .podiumAvatar{
       width: 64px;
       height: 64px;
       border-radius: 999px;
-      overflow: hidden;
-      border: 2px solid rgba(255,255,255,.22);
+      overflow: visible;
       background: rgba(255,255,255,.06);
       box-shadow: 0 18px 45px rgba(0,0,0,.35);
       flex: 0 0 auto;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease;
+      position: relative;
     }
-    .podiumCard:hover .podiumAvatar {
-      transform: scale(1.05);
-      border-color: var(--accent2);
-    }
-    .podiumCard.rank1:hover .podiumAvatar {
-      border-color: var(--gold);
-    }
+
     .podiumAvatar img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
+      border-radius: 999px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Borde giratorio para los 3 primeros */
+    .podiumAvatar::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 999px;
+      z-index: 1;
+      animation: rotateBorder 3s linear infinite;
+    }
+
+    .podiumAvatar::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 999px;
+      background: var(--bg1);
+      z-index: 1;
+    }
+
+    /* Borde dorado para #1 */
+    .podiumCard.rank1 .podiumAvatar::before {
+      background: conic-gradient(
+        from 0deg,
+        var(--gold),
+        #FFA500,
+        var(--gold),
+        #FFE55C,
+        var(--gold)
+      );
+    }
+
+    /* Borde plateado para #2 */
+    .podiumCard.rank2 .podiumAvatar::before {
+      background: conic-gradient(
+        from 0deg,
+        var(--silver),
+        #E8E8E8,
+        var(--silver),
+        #A0A0A0,
+        var(--silver)
+      );
+    }
+
+    /* Borde bronce para #3 */
+    .podiumCard.rank3 .podiumAvatar::before {
+      background: conic-gradient(
+        from 0deg,
+        var(--bronze),
+        #E8A060,
+        var(--bronze),
+        #8B4513,
+        var(--bronze)
+      );
+    }
+
+    @keyframes rotateBorder {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .podiumCard:hover .podiumAvatar {
+      transform: scale(1.05);
     }
 
     .podiumBig{ transform: translateY(-6px); }
     .podiumCard.rank1 .podiumAvatar{
       width: 74px;
       height: 74px;
-      border-color: rgba(255,215,0,.35);
-      box-shadow: 0 0 0 6px rgba(255,215,0,.08), 0 22px 60px rgba(0,0,0,.40);
+    }
+
+    .podiumCard.rank1 .podiumAvatar::before {
+      box-shadow: 0 0 20px rgba(255,215,0,.4), 0 0 40px rgba(255,215,0,.2);
     }
 
     .podiumMedal{
@@ -345,6 +451,12 @@
     .podiumCard.rank1:hover .podiumName strong {
       color: var(--gold);
     }
+    .podiumCard.rank2:hover .podiumName strong {
+      color: var(--silver);
+    }
+    .podiumCard.rank3:hover .podiumName strong {
+      color: var(--bronze);
+    }
     .podiumMeta{
       display:flex;
       gap:8px;
@@ -368,6 +480,16 @@
     .podiumCard.rank1 .points-badge {
       background: linear-gradient(135deg, var(--gold), #FFA500);
       box-shadow: 0 4px 15px rgba(255,215,0,.35);
+    }
+
+    .podiumCard.rank2 .points-badge {
+      background: linear-gradient(135deg, var(--silver), #A0A0A0);
+      box-shadow: 0 4px 15px rgba(192,192,192,.35);
+    }
+
+    .podiumCard.rank3 .points-badge {
+      background: linear-gradient(135deg, var(--bronze), #8B4513);
+      box-shadow: 0 4px 15px rgba(205,127,50,.35);
     }
 
     /* ===== Separador ===== */
@@ -579,6 +701,17 @@
       flex-wrap:wrap;
     }
 
+    .footer .update-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer .update-info::before {
+      content: "🕐";
+      font-size: 11px;
+    }
+
     /* ===== Count-up ===== */
     .count-up {
       display: inline-block;
@@ -606,6 +739,9 @@
       .wrap {
         max-width: 100%;
         order: 1;
+      }
+      .parallax-bg {
+        width: 100%;
       }
     }
 
@@ -636,11 +772,23 @@
       .chip.progress-chip {
         min-width: unset;
       }
+
+      .footer {
+        flex-direction: column;
+        gap: 6px;
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- Parallax Background (solo lado izquierdo) -->
+  <div class="parallax-bg">
+    <div class="parallax-layer parallax-layer-1" data-speed="0.02"></div>
+    <div class="parallax-layer parallax-layer-2" data-speed="0.035"></div>
+    <div class="parallax-layer parallax-layer-3" data-speed="0.025"></div>
+  </div>
+
   <div class="main-container">
     <div class="wrap">
       <header>
@@ -676,6 +824,7 @@
 
       <div class="footer">
         <div>Tip: Ganas el torneo cuando dejas de perseguir el trofeo y empiezas a dominar el proceso.</div>
+        <div class="update-info">Última actualización: <b id="lastUpdate"></b></div>
         <div>Orden: puntos → rendimiento → nombre.</div>
       </div>
     </div>
@@ -706,23 +855,54 @@
   </div>
 
   <script>
-    // ============================
-    // DATOS DE JUGADORES
-    // ============================
+    // ╔════════════════════════════════════════════════════════════════╗
+    // ║          📊 DATOS A ACTUALIZAR - TODO JUNTO AQUÍ 📊            ║
+    // ╠════════════════════════════════════════════════════════════════╣
+    // ║  Modifica estos valores cada vez que haya nuevos resultados    ║
+    // ╚════════════════════════════════════════════════════════════════╝
+
+    const TOTAL_TOURNAMENT_SETS = 45;        // Total de sets del torneo
+    const SETS_PLAYED = 6;                   // Sets jugados hasta ahora
+    const LAST_UPDATE = "19-01-2026";        // Fecha última actualización
+
     const players = [
-      { name: "Dani M.", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m", videoScale: 1.0 },
-      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a", videoScale: 1.0 },
-      { name: "Yuri", sets: 6, won: 2, lost: 4, avatar: "img/yuri.jpg", videoId: "yuri", videoScale: 1.0 },
-      { name: "Feli", sets: 6, won: 2, lost: 4, avatar: "img/feli.jpg", videoId: "feli", videoScale: 1.0 },
-      { name: "Ric", sets: 3, won: 1, lost: 2, avatar: "img/ric.jpg", videoId: "ric", videoScale: 1.0 },
-      { name: "Esteban", sets: 3, won: 3, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban", videoScale: 0.9 }
+      //        nombre visualmente en el ranking
+      //        |visualmente en el ranking
+      //        |          sets jugados por el jugador
+      //        |          |  sets ganados (= PUNTOS)
+      //        |          |  |  sets perdidos
+      //        |          |  |  |  foto del jugador
+      //        |          |  |  |  |                   ID del video
+      //        |          |  |  |  |                   |            escala del video
+      { name: "Dani M.",   sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg",   videoId: "dani-m",   videoScale: 1.0 },
+      { name: "Dani A.",   sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg",   videoId: "dani-a",   videoScale: 1.0 },
+      { name: "Yuri",      sets: 6, won: 2, lost: 4, avatar: "img/yuri.jpg",     videoId: "yuri",     videoScale: 1.0 },
+      { name: "Feli",      sets: 6, won: 2, lost: 4, avatar: "img/feli.jpg",     videoId: "feli",     videoScale: 1.0 },
+      { name: "Ric",       sets: 3, won: 1, lost: 2, avatar: "img/ric.jpg",      videoId: "ric",      videoScale: 0.9 },
+      { name: "Esteban",   sets: 3, won: 3, lost: 0, avatar: "img/esteban.jpg",  videoId: "esteban",  videoScale: 0.9 }
     ];
 
-    const TOTAL_TOURNAMENT_SETS = 45;
-    const SETS_PLAYED = 6;
-    // ============================
+    // ╔════════════════════════════════════════════════════════════════╗
+    // ║              🚫 NO MODIFICAR DEBAJO DE ESTA LÍNEA 🚫            ║
+    // ╚════════════════════════════════════════════════════════════════╝
 
     let currentVideo = null;
+
+    // ============================
+    // PARALLAX EFFECT
+    // ============================
+    document.addEventListener('mousemove', (e) => {
+      const layers = document.querySelectorAll('.parallax-layer');
+      const mouseX = e.clientX / window.innerWidth - 0.5;
+      const mouseY = e.clientY / window.innerHeight - 0.5;
+
+      layers.forEach(layer => {
+        const speed = parseFloat(layer.dataset.speed) || 0.02;
+        const x = mouseX * speed * 1000;
+        const y = mouseY * speed * 1000;
+        layer.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
 
     // ============================
     // COUNT-UP ANIMATION
@@ -735,7 +915,6 @@
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Easing function (ease-out)
         const easeOut = 1 - Math.pow(1 - progress, 3);
         const current = Math.round(start + (target - start) * easeOut);
         
@@ -840,7 +1019,6 @@
         addCardHoverEvents(card, card.dataset.videoId);
       });
 
-      // Animate points in podium
       podium.querySelectorAll('.count-up-points').forEach(el => {
         const target = parseInt(el.dataset.target);
         setTimeout(() => animateCountUp(el, target, 1200), 300);
@@ -851,6 +1029,9 @@
       points(b) - points(a) || perf(b) - perf(a) || String(a.name || "").localeCompare(String(b.name || ""))
     );
 
+    // Set last update
+    document.getElementById("lastUpdate").textContent = LAST_UPDATE;
+
     // Animate header stats
     const progressPercent = Math.round((SETS_PLAYED / TOTAL_TOURNAMENT_SETS) * 100);
     
@@ -858,7 +1039,6 @@
       animateCountUp(document.getElementById("totalSets"), SETS_PLAYED, 1500);
       animateCountUp(document.getElementById("progressPercent"), progressPercent, 1500);
       
-      // Animate progress bar
       setTimeout(() => {
         document.getElementById("progressFill").style.width = progressPercent + "%";
       }, 100);
@@ -912,7 +1092,6 @@
       list.appendChild(card);
     });
 
-    // Animate all points in list after cards appear
     setTimeout(() => {
       list.querySelectorAll('.count-up-points').forEach((el, i) => {
         const target = parseInt(el.dataset.target);
@@ -922,7 +1101,3 @@
   </script>
 </body>
 </html>
-
-
-
-
