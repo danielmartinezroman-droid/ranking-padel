@@ -30,7 +30,7 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      /* MEJORA #2: Degradado suavizado sin banding */
+      /* Degradado suavizado sin banding */
       background: linear-gradient(
         90deg, 
         var(--bg1) 0%, 
@@ -46,7 +46,7 @@
       overflow-x: hidden;
     }
 
-    /* MEJORA #2: Noise overlay para eliminar banding */
+    /* Noise overlay para eliminar banding */
     .noise-overlay {
       position: fixed;
       inset: 0;
@@ -76,7 +76,7 @@
       transition: transform 0.15s ease-out;
     }
 
-    /* MEJORA #4: Capas con animación continua */
+    /* Capas con animación continua */
     .parallax-layer-1 {
       background: radial-gradient(900px 450px at 15% 10%, rgba(124,92,255,.26), transparent 60%);
       animation: floatLayer1 20s ease-in-out infinite;
@@ -92,7 +92,7 @@
       animation: floatLayer3 22s ease-in-out infinite;
     }
 
-    /* MEJORA #4: Animaciones para las capas del fondo */
+    /* Animaciones para las capas del fondo */
     @keyframes floatLayer1 {
       0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
       25% { transform: translate(30px, -20px) scale(1.05); opacity: 1; }
@@ -111,7 +111,7 @@
       50% { transform: translate(35px, -25px) scale(1.1); opacity: 0.85; }
     }
 
-    /* MEJORA #4: Luz ambiental animada extra */
+    /* Luz ambiental animada extra */
     .ambient-glow {
       position: fixed;
       top: -30%;
@@ -297,7 +297,7 @@
       background: linear-gradient(180deg, rgba(124,92,255,.15), rgba(255,255,255,.06));
     }
 
-    /* ===== MEJORA #3: Canvas de partículas para el podio ===== */
+    /* Canvas de partículas para el podio */
     .particle-canvas {
       position: absolute;
       inset: 0;
@@ -312,28 +312,11 @@
       opacity: 1;
     }
 
-    /* ===== GLOW PULSANTE #1 ===== */
+    /* CAMBIO #3: Primer lugar SIN glow pulsante - solo entrada normal */
     .podiumCard.rank1 {
       border-color: rgba(255,215,0,.25);
-      animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards, 
-                 goldGlow 3s ease-in-out infinite 600ms;
-    }
-
-    @keyframes goldGlow {
-      0%, 100% { 
-        box-shadow: 
-          0 18px 55px rgba(0,0,0,.45),
-          0 0 20px rgba(255,215,0,.15),
-          0 0 40px rgba(255,215,0,.08),
-          inset 0 0 30px rgba(255,215,0,.03);
-      }
-      50% { 
-        box-shadow: 
-          0 18px 55px rgba(0,0,0,.45),
-          0 0 35px rgba(255,215,0,.30),
-          0 0 70px rgba(255,215,0,.15),
-          inset 0 0 50px rgba(255,215,0,.06);
-      }
+      /* Solo la animación de entrada, sin goldGlow */
+      animation: podiumEnter 600ms cubic-bezier(.2,.9,.2,1) forwards;
     }
 
     .podiumCard.rank1:hover {
@@ -449,7 +432,7 @@
       );
     }
 
-    /* ===== MEJORA #1: Borde plateado METÁLICO para #2 ===== */
+    /* Borde plateado METÁLICO para #2 - SIN animación */
     .podiumCard.rank2 .podiumAvatar::before {
       background: conic-gradient(
         from 0deg,
@@ -497,6 +480,7 @@
       box-shadow: 0 0 20px rgba(255,215,0,.4), 0 0 40px rgba(255,215,0,.2);
     }
 
+    /* CAMBIO #1: Medallas del podio SIN animación */
     .podiumMedal{
       width: 42px;
       height: 42px;
@@ -509,12 +493,13 @@
       position:relative;
       z-index:1;
     }
+    
     .medalGold{
       background: radial-gradient(circle at 30% 30%, rgba(255,215,0,.55), rgba(255,255,255,.08) 60%);
       box-shadow: 0 0 0 4px rgba(255,215,0,.08), 0 25px 60px rgba(255,215,0,.12);
     }
 
-    /* ===== MEJORA #1: Medal plateada METÁLICA ===== */
+    /* Medal plateada METÁLICA - SIN animación */
     .medalSilver{
       background: linear-gradient(
         135deg,
@@ -528,19 +513,12 @@
         #b8b8b8 85%,
         #e0e0e0 100%
       );
-      background-size: 200% 200%;
-      animation: silverShimmer 3s ease-in-out infinite;
       box-shadow: 
         0 0 0 4px rgba(255,255,255,.15),
         0 25px 60px rgba(192,192,192,.15),
         inset 0 1px 2px rgba(255,255,255,0.8),
         inset 0 -1px 2px rgba(0,0,0,0.1);
       border: 1px solid rgba(255,255,255,0.4);
-    }
-
-    @keyframes silverShimmer {
-      0%, 100% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
     }
 
     .medalBronze{
@@ -575,6 +553,7 @@
       font-size: 12px;
     }
 
+    /* CAMBIO #1: Badge de puntos UNIFORME para todo el podio - sin colores especiales */
     .points-badge{
       font-family: var(--mono);
       font-size: 13px;
@@ -586,44 +565,13 @@
       box-shadow: 0 4px 15px rgba(124,92,255,.35);
     }
 
-    .podiumCard.rank1 .points-badge {
-      background: linear-gradient(135deg, var(--gold), #FFA500);
-      box-shadow: 0 4px 15px rgba(255,215,0,.35);
-    }
-
-    /* ===== MEJORA #1: Badge de puntos PLATEADO METÁLICO ===== */
-    .podiumCard.rank2 .points-badge {
-      background: linear-gradient(
-        135deg,
-        #f5f5f5 0%,
-        #e8e8e8 10%,
-        #c8c8c8 25%,
-        #f8f8f8 40%,
-        #ffffff 50%,
-        #d8d8d8 60%,
-        #b0b0b0 75%,
-        #e0e0e0 90%,
-        #f0f0f0 100%
-      );
-      background-size: 200% 200%;
-      color: #404040;
-      box-shadow: 
-        0 4px 15px rgba(192,192,192,.5),
-        inset 0 1px 3px rgba(255,255,255,0.9),
-        inset 0 -1px 3px rgba(0,0,0,0.1);
-      text-shadow: 0 1px 1px rgba(255,255,255,0.6);
-      border: 1px solid rgba(255,255,255,0.4);
-      animation: silverBadgeShimmer 4s ease-in-out infinite;
-    }
-
-    @keyframes silverBadgeShimmer {
-      0%, 100% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
-    }
-
+    /* Todos los lugares del podio usan el mismo estilo de puntos */
+    .podiumCard.rank1 .points-badge,
+    .podiumCard.rank2 .points-badge,
     .podiumCard.rank3 .points-badge {
-      background: linear-gradient(135deg, var(--bronze), #8B4513);
-      box-shadow: 0 4px 15px rgba(205,127,50,.35);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      box-shadow: 0 4px 15px rgba(124,92,255,.35);
     }
 
     /* ===== Separador ===== */
@@ -916,7 +864,7 @@
 </head>
 
 <body>
-  <!-- MEJORA #2: Noise overlay para eliminar banding -->
+  <!-- Noise overlay para eliminar banding -->
   <div class="noise-overlay"></div>
 
   <!-- Parallax Background (solo lado izquierdo) -->
@@ -926,7 +874,7 @@
     <div class="parallax-layer parallax-layer-3" data-speed="0.025"></div>
   </div>
 
-  <!-- MEJORA #4: Luz ambiental animada -->
+  <!-- Luz ambiental animada -->
   <div class="ambient-glow"></div>
 
   <div class="main-container">
@@ -1039,7 +987,6 @@
         const speed = parseFloat(layer.dataset.speed) || 0.02;
         const x = mouseX * speed * 1000;
         const y = mouseY * speed * 1000;
-        // Combina la animación CSS con el movimiento del mouse
         layer.style.transform = `translate(${x}px, ${y}px)`;
       });
     });
@@ -1069,7 +1016,9 @@
     }
 
     // ============================
-    // MEJORA #3: SISTEMA DE PARTÍCULAS
+    // SISTEMA DE PARTÍCULAS (MEJORADO)
+    // - Más difuminadas (blur aumentado)
+    // - Más lentas (velocidad reducida)
     // ============================
     class ParticleSystem {
       constructor(canvas, color) {
@@ -1093,15 +1042,18 @@
         return {
           x: Math.random() * this.canvas.width,
           y: -10,
-          size: Math.random() * 2.5 + 0.8,
-          speedY: Math.random() * 1.2 + 0.4,
-          speedX: (Math.random() - 0.5) * 0.6,
-          opacity: Math.random() * 0.8 + 0.2,
+          // CAMBIO #2: Partículas más pequeñas para mejor difuminado
+          size: Math.random() * 2 + 0.5,
+          // CAMBIO #2: Velocidad más lenta
+          speedY: Math.random() * 0.6 + 0.2,
+          speedX: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.5 + 0.15,
           rotation: Math.random() * 360,
-          rotationSpeed: (Math.random() - 0.5) * 3,
+          rotationSpeed: (Math.random() - 0.5) * 1.5,
           type: Math.random() > 0.4 ? 'sparkle' : 'snow',
           wobble: Math.random() * Math.PI * 2,
-          wobbleSpeed: Math.random() * 0.04 + 0.015
+          // CAMBIO #2: Wobble más lento
+          wobbleSpeed: Math.random() * 0.02 + 0.008
         };
       }
 
@@ -1129,7 +1081,8 @@
         
         this.ctx.closePath();
         this.ctx.fillStyle = this.color;
-        this.ctx.shadowBlur = 8;
+        // CAMBIO #2: Blur aumentado para más difuminado
+        this.ctx.shadowBlur = 12;
         this.ctx.shadowColor = this.color;
         this.ctx.fill();
         
@@ -1142,7 +1095,8 @@
         this.ctx.beginPath();
         this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
-        this.ctx.shadowBlur = 6;
+        // CAMBIO #2: Blur aumentado para más difuminado
+        this.ctx.shadowBlur = 10;
         this.ctx.shadowColor = this.color;
         this.ctx.fill();
         this.ctx.restore();
@@ -1153,8 +1107,8 @@
         
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Añadir nuevas partículas
-        if (this.particles.length < 40 && Math.random() > 0.88) {
+        // CAMBIO #2: Menos partículas generadas (más espaciadas)
+        if (this.particles.length < 30 && Math.random() > 0.92) {
           this.particles.push(this.createParticle());
         }
         
@@ -1164,13 +1118,13 @@
           
           // Movimiento con wobble
           p.wobble += p.wobbleSpeed;
-          p.x += p.speedX + Math.sin(p.wobble) * 0.4;
+          p.x += p.speedX + Math.sin(p.wobble) * 0.25;
           p.y += p.speedY;
           p.rotation += p.rotationSpeed;
           
-          // Fade out cerca del fondo
-          if (p.y > this.canvas.height - 40) {
-            p.opacity -= 0.025;
+          // Fade out más gradual cerca del fondo
+          if (p.y > this.canvas.height - 60) {
+            p.opacity -= 0.015;
           }
           
           // Dibujar según tipo
@@ -1201,14 +1155,14 @@
         if (this.animationId) {
           cancelAnimationFrame(this.animationId);
         }
-        // Fade out de partículas existentes
+        // Fade out más suave de partículas existentes
         const fadeOut = () => {
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
           let hasParticles = false;
           
           for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
-            p.opacity -= 0.06;
+            p.opacity -= 0.04;
             p.y += p.speedY;
             
             if (p.opacity > 0) {
@@ -1304,7 +1258,7 @@
 
         return `
           <div class="podiumCard ${big} ${rankClass}" data-rank="${realRank}" data-video-id="${p.videoId}">
-            <!-- MEJORA #3: Canvas de partículas -->
+            <!-- Canvas de partículas -->
             <canvas class="particle-canvas" data-rank="${realRank}"></canvas>
             
             <div class="podiumTop">
