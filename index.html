@@ -83,8 +83,9 @@
       top: 0;
       left: 0;
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.4s ease, transform 0.3s ease;
       pointer-events: none;
+      transform-origin: center center;
     }
 
     .video-wrapper video.active {
@@ -709,12 +710,12 @@
     // DATOS DE JUGADORES
     // ============================
     const players = [
-      { name: "Dani M.", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m" , videoScale: 1.5},
-      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a" ,videoScale: 1.0},
-      { name: "Yuri", sets: 6, won: 2, lost: 4, avatar: "img/yuri.jpg", videoId: "yuri",videoScale: 1.0 },
-      { name: "Feli", sets: 6, won: 2, lost: 4, avatar: "img/feli.jpg", videoId: "feli",videoScale: 1.0 },
-      { name: "Ric", sets: 3, won: 1, lost: 2, avatar: "img/ric.jpg", videoId: "ric",videoScale: 1.0 },
-      { name: "Esteban", sets: 3, won: 3, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban",videoScale: 1.0 }
+      { name: "Dani M.", sets: 3, won: 3, lost: 0, avatar: "img/dani-m.jpg", videoId: "dani-m", videoScale: 1.0 },
+      { name: "Dani A.", sets: 3, won: 1, lost: 2, avatar: "img/dani-a.jpg", videoId: "dani-a", videoScale: 1.0 },
+      { name: "Yuri", sets: 6, won: 2, lost: 4, avatar: "img/yuri.jpg", videoId: "yuri", videoScale: 1.0 },
+      { name: "Feli", sets: 6, won: 2, lost: 4, avatar: "img/feli.jpg", videoId: "feli", videoScale: 1.0 },
+      { name: "Ric", sets: 3, won: 1, lost: 2, avatar: "img/ric.jpg", videoId: "ric", videoScale: 0.9 },
+      { name: "Esteban", sets: 3, won: 3, lost: 0, avatar: "img/esteban.jpg", videoId: "esteban", videoScale: 0.9 }
     ];
 
     const TOTAL_TOURNAMENT_SETS = 45;
@@ -753,11 +754,16 @@
         currentVideo.pause();
         currentVideo.currentTime = 0;
         currentVideo.classList.remove('active');
+        currentVideo.style.transform = '';
       }
       
       const video = document.getElementById(`video-${videoId}`);
       if (video) {
+        const player = players.find(p => p.videoId === videoId);
+        const scale = player?.videoScale || 1.0;
+        
         video.classList.add('active');
+        video.style.transform = `scale(${scale})`;
         video.currentTime = 0;
         video.play().catch(e => console.log('Video error:', e));
         currentVideo = video;
@@ -769,6 +775,7 @@
         currentVideo.pause();
         currentVideo.currentTime = 0;
         currentVideo.classList.remove('active');
+        currentVideo.style.transform = '';
         currentVideo = null;
       }
     }
@@ -915,5 +922,3 @@
   </script>
 </body>
 </html>
-
-
