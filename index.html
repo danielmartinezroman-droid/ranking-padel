@@ -30,7 +30,6 @@
       margin:0;
       font-family: var(--sans);
       color:var(--text);
-      /* DEGRADADO: hasta 65% y luego negro puro */
       background: linear-gradient(
         90deg, 
         var(--bg1) 0%, 
@@ -59,6 +58,41 @@
       flex: 1;
       max-width: 980px;
       margin: 0 auto;
+      position: relative;
+    }
+
+    /* ===== Logo Mercado Libre ===== */
+    .meli-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 120px;
+      height: auto;
+      opacity: 0.9;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 50;
+    }
+
+    .meli-logo:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 1100px) {
+      .meli-logo {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-left: auto;
+        display: block;
+        margin-bottom: 16px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .meli-logo {
+        width: 100px;
+      }
     }
 
     /* ===== Sidebar de Video ===== */
@@ -107,6 +141,7 @@
       display:flex; gap:14px;
       justify-content:space-between; align-items:flex-end;
       flex-wrap:wrap; margin-bottom: 16px;
+      position: relative;
     }
 
     .title{ display:flex; flex-direction:column; gap:6px; }
@@ -175,7 +210,7 @@
       gap: 12px;
       margin-top: 14px;
       margin-bottom: 12px;
-      align-items: flex-end; /* CLAVE: alinea desde abajo */
+      align-items: flex-end;
     }
 
     .podiumCard{
@@ -224,18 +259,15 @@
     }
 
     /* ===== ALTURAS DEL PODIO - Como podio real ===== */
-    /* Primer lugar: MÁS ALTO */
     .podiumCard.rank1 {
       min-height: 220px;
       border-color: rgba(255,215,0,.25);
     }
 
-    /* Segundo lugar: ALTURA MEDIA */
     .podiumCard.rank2 {
       min-height: 185px;
     }
 
-    /* Tercer lugar: MÁS BAJO */
     .podiumCard.rank3 {
       min-height: 160px;
     }
@@ -332,7 +364,6 @@
       position: absolute;
       inset: -4px;
       border-radius: 999px;
-      
       animation: rotateBorder 3s linear infinite;
     }
 
@@ -342,7 +373,7 @@
       inset: -2px;
       border-radius: 999px;
       background: var(--bg1);
-      z-index: 1;
+      
     }
 
     /* Borde dorado para #1 */
@@ -423,7 +454,7 @@
       box-shadow: 0 0 0 4px rgba(255,215,0,.08), 0 25px 60px rgba(255,215,0,.12);
     }
 
-    /* Medal plateada METÁLICA - con número más oscuro */
+    /* Medal plateada METÁLICA */
     .medalSilver{
       background: linear-gradient(
         135deg,
@@ -792,6 +823,9 @@
 <body>
   <div class="main-container">
     <div class="wrap">
+      <!-- Logo Mercado Libre -->
+      <img src="img/Logo.png" alt="Mercado Libre" class="meli-logo">
+
       <header>
         <div class="title">
           <h1>Meli Pádel Master 2026 — Ranking</h1>
