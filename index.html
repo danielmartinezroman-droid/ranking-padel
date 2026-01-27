@@ -690,13 +690,15 @@
     .card.fight:hover{ border-color: rgba(251,191,36,.35); }
     .card.comeback:hover{ border-color: rgba(251,113,133,.35); }
 
+    /* ===== Barra de Rendimiento con texto interno ===== */
     .bar{
       width: min(420px, 100%);
       height: 10px;
       border-radius: 999px;
       background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.10);
-      overflow:hidden;
+      overflow: hidden;
+      position: relative;
     }
     .bar > span{
       display:block; height:100%;
@@ -707,24 +709,41 @@
       transform-origin: left;
       animation: fill 900ms cubic-bezier(.2,.9,.2,1) both;
     }
+    
+    /* Texto "Rendimiento" dentro de la barra */
+    .bar::after {
+      content: 'Rendimiento';
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 7px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      
+      pointer-events: none;
+    }
+    
     @keyframes fill{ from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-    /* ===== Barra de Participación ===== */
-    .participation-bar-container {
+    /* ===== Barra de Timeline (antes Participación) ===== */
+    .timeline-bar-container {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-top: 6px;
     }
 
-    .participation-label {
+    .timeline-label {
       font-size: 10px;
       color: rgba(255,255,255,.45);
       font-family: var(--mono);
       white-space: nowrap;
     }
 
-    .participation-bar {
+    .timeline-bar {
       flex: 1;
       height: 4px;
       border-radius: 999px;
@@ -733,7 +752,7 @@
       max-width: 200px;
     }
 
-    .participation-bar > span {
+    .timeline-bar > span {
       display: block;
       height: 100%;
       width: var(--p);
@@ -742,7 +761,7 @@
       transition: width 0.8s cubic-bezier(.2,.9,.2,1);
     }
 
-    .participation-percent {
+    .timeline-percent {
       font-size: 10px;
       color: rgba(255,255,255,.50);
       font-family: var(--mono);
@@ -856,7 +875,7 @@
         gap: 6px;
       }
 
-      .participation-bar {
+      .timeline-bar {
         max-width: 150px;
       }
     }
@@ -1182,7 +1201,7 @@
 
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
     const points = p => Number(p.won) || 0;
-    const participation = p => Math.round((Number(p.sets) / SETS_PER_PLAYER) * 100);
+    const timeline = p => Math.round((Number(p.sets) / SETS_PER_PLAYER) * 100);
     const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
 
     function medalLabel(pct){
@@ -1202,7 +1221,7 @@
       podium.innerHTML = mapped.map(p => {
         const pct = perf(p);
         const pts = points(p);
-        const part = participation(p);
+        const tl = timeline(p);
         const m = medalLabel(pct);
 
         const realRank = (p === top3[0]) ? 1 : (p === top3[1]) ? 2 : 3;
@@ -1229,10 +1248,10 @@
                 <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
               </div>
               <div class="bar"><span style="--w:${pct}%"></span></div>
-              <div class="participation-bar-container">
-                <span class="participation-label">Jugado:</span>
-                <div class="participation-bar"><span style="--p:${part}%"></span></div>
-                <span class="participation-percent">${p.sets}/${SETS_PER_PLAYER}</span>
+              <div class="timeline-bar-container">
+                <span class="timeline-label">Timeline:</span>
+                <div class="timeline-bar"><span style="--p:${tl}%"></span></div>
+                <span class="timeline-percent">${tl}%</span>
               </div>
             </div>
           </div>
@@ -1290,7 +1309,7 @@
     sorted.forEach((p, idx) => {
       const pct = perf(p);
       const pts = points(p);
-      const part = participation(p);
+      const tl = timeline(p);
       const m = medalLabel(pct);
 
       const card = document.createElement("div");
@@ -1315,10 +1334,10 @@
               </span>
             </div>
             <div class="bar"><span style="--w:${pct}%"></span></div>
-            <div class="participation-bar-container">
-              <span class="participation-label">Jugado:</span>
-              <div class="participation-bar"><span style="--p:${part}%"></span></div>
-              <span class="participation-percent">${p.sets}/${SETS_PER_PLAYER}</span>
+            <div class="timeline-bar-container">
+              <span class="timeline-label">Timeline:</span>
+              <div class="timeline-bar"><span style="--p:${tl}%"></span></div>
+              <span class="timeline-percent">${tl}%</span>
             </div>
           </div>
         </div>
