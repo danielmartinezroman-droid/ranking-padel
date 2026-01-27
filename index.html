@@ -137,71 +137,15 @@
       opacity: 1;
     }
 
-    /* ===== Placeholder - Spinner estilo macOS ===== */
-    .video-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      transition: opacity 0.4s ease;
-      
-    }
-
-    .video-placeholder.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Spinner macOS style */
-    .macos-spinner {
-      width: 40px;
-      height: 40px;
-      position: relative;
-    }
-
-    .macos-spinner .blade {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 2px;
-      height: 10px;
-      margin-left: -1px;
-      margin-top: -20px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.15);
-      transform-origin: center 20px;
-      animation: macos-fade 1s infinite linear;
-    }
-
-    .macos-spinner .blade:nth-child(1)  { transform: rotate(0deg);   animation-delay: -0.916s; }
-    .macos-spinner .blade:nth-child(2)  { transform: rotate(30deg);  animation-delay: -0.833s; }
-    .macos-spinner .blade:nth-child(3)  { transform: rotate(60deg);  animation-delay: -0.75s; }
-    .macos-spinner .blade:nth-child(4)  { transform: rotate(90deg);  animation-delay: -0.666s; }
-    .macos-spinner .blade:nth-child(5)  { transform: rotate(120deg); animation-delay: -0.583s; }
-    .macos-spinner .blade:nth-child(6)  { transform: rotate(150deg); animation-delay: -0.5s; }
-    .macos-spinner .blade:nth-child(7)  { transform: rotate(180deg); animation-delay: -0.416s; }
-    .macos-spinner .blade:nth-child(8)  { transform: rotate(210deg); animation-delay: -0.333s; }
-    .macos-spinner .blade:nth-child(9)  { transform: rotate(240deg); animation-delay: -0.25s; }
-    .macos-spinner .blade:nth-child(10) { transform: rotate(270deg); animation-delay: -0.166s; }
-    .macos-spinner .blade:nth-child(11) { transform: rotate(300deg); animation-delay: -0.083s; }
-    .macos-spinner .blade:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
-
-    @keyframes macos-fade {
-      0% { background: rgba(255,255,255,0.7); }
-      100% { background: rgba(255,255,255,0.1); }
-    }
-
     /* ===== Ajustes para notebooks (1100px - 1500px) - Sidebar al 70% ===== */
     @media (min-width: 1100px) and (max-width: 1500px) {
       .video-sidebar {
-        width: 266px; /* 380 * 0.7 */
+        width: 266px;
         right: 10px;
       }
       
       .video-wrapper {
-        height: 420px; /* 600 * 0.7 */
+        height: 420px;
         border-radius: 14px;
       }
       
@@ -209,17 +153,6 @@
         max-width: 700px;
         margin-right: 280px;
         margin-left: auto;
-      }
-      
-      .macos-spinner {
-        width: 32px;
-        height: 32px;
-      }
-      
-      .macos-spinner .blade {
-        height: 8px;
-        margin-top: -16px;
-        transform-origin: center 16px;
       }
     }
 
@@ -808,7 +741,7 @@
       color: rgba(255,255,255,0.35);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      z-index: 1;
+      
       pointer-events: none;
     }
     
@@ -1016,24 +949,6 @@
     <!-- Sidebar de Video -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
-        <!-- Placeholder con spinner macOS -->
-        <div class="video-placeholder" id="videoPlaceholder">
-          <div class="macos-spinner">
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-            <div class="blade"></div>
-          </div>
-        </div>
-        
         <video id="video-dani-a" muted loop playsinline preload="auto">
           <source src="img/Daniel Aguayo.mp4" type="video/mp4">
         </video>
@@ -1066,7 +981,7 @@
     const TOTAL_TOURNAMENT_SETS = 45;
     const SETS_PLAYED = 9;
     const LAST_UPDATE = "21-01-2026";
-    const SETS_PER_PLAYER = 30;  // Sets que debe jugar cada jugador
+    const SETS_PER_PLAYER = 30;
 
     const players = [
       { name: "Dani M.",   sets: 6, won: 4, lost: 2, avatar: "img/dani-m.jpg",   videoId: "dani-m",   videoScale: 1.0 },
@@ -1082,6 +997,44 @@
     // ╚════════════════════════════════════════════════════════════════╝
 
     let currentVideo = null;
+
+    // ============================
+    // HOVER SOUND - Sutil y elegante
+    // ============================
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playHoverSound() {
+      // Crear oscilador para un sonido sutil tipo "tick"
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Frecuencia alta y corta = sonido sutil tipo click
+      oscillator.frequency.setValueAtTime(1800, audioContext.currentTime);
+      oscillator.type = 'sine';
+      
+      // Volumen muy bajo para que sea sutil
+      gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.08);
+    }
+
+    // Unlock audio context on first user interaction
+    document.addEventListener('click', () => {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }, { once: true });
+
+    document.addEventListener('mouseover', () => {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }, { once: true });
 
     // ============================
     // COUNT-UP ANIMATION
@@ -1269,10 +1222,6 @@
     };
 
     function showPlayerVideo(videoId) {
-      // Ocultar placeholder
-      const placeholder = document.getElementById('videoPlaceholder');
-      if (placeholder) placeholder.classList.add('hidden');
-      
       if (currentVideo) {
         currentVideo.pause();
         currentVideo.currentTime = 0;
@@ -1301,14 +1250,13 @@
         currentVideo.style.transform = '';
         currentVideo = null;
       }
-      
-      // Mostrar placeholder
-      const placeholder = document.getElementById('videoPlaceholder');
-      if (placeholder) placeholder.classList.remove('hidden');
     }
 
     function addCardHoverEvents(cardElement, videoId) {
-      cardElement.addEventListener('mouseenter', () => showPlayerVideo(videoId));
+      cardElement.addEventListener('mouseenter', () => {
+        playHoverSound();
+        showPlayerVideo(videoId);
+      });
       cardElement.addEventListener('mouseleave', hideAllVideos);
     }
 
@@ -1328,7 +1276,7 @@
       if (!podium) return;
 
       const top3 = sorted.slice(0,3);
-      const order = [1,0,2]; // 2do, 1ro, 3ro (orden visual)
+      const order = [1,0,2];
       const mapped = order.map(i => top3[i]).filter(Boolean);
 
       podium.innerHTML = mapped.map(p => {
@@ -1380,6 +1328,7 @@
           const particleSystem = new ParticleSystem(canvas, particleColors[rank]);
           
           card.addEventListener('mouseenter', () => {
+            playHoverSound();
             showPlayerVideo(videoId);
             particleSystem.start();
           });
