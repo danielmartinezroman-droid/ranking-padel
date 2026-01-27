@@ -137,19 +137,16 @@
       opacity: 1;
     }
 
-    /* ===== Placeholder cuando no hay video activo ===== */
+    /* ===== Placeholder - Spinner estilo macOS ===== */
     .video-placeholder {
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
       opacity: 1;
       transition: opacity 0.4s ease;
       
-      background: radial-gradient(ellipse at center, rgba(124,92,255,0.08) 0%, transparent 70%);
     }
 
     .video-placeholder.hidden {
@@ -157,52 +154,72 @@
       pointer-events: none;
     }
 
-    .video-placeholder img {
-      width: 120px;
-      height: auto;
-      opacity: 0.6;
-      filter: grayscale(30%);
-      animation: floatLogo 3s ease-in-out infinite;
+    /* Spinner macOS style */
+    .macos-spinner {
+      width: 40px;
+      height: 40px;
+      position: relative;
     }
 
-    .video-placeholder .hint {
-      color: rgba(255,255,255,0.35);
-      font-size: 12px;
-      text-align: center;
-      font-style: italic;
-      max-width: 200px;
-      line-height: 1.4;
+    .macos-spinner .blade {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      height: 10px;
+      margin-left: -1px;
+      margin-top: -20px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.15);
+      transform-origin: center 20px;
+      animation: macos-fade 1s infinite linear;
     }
 
-    @keyframes floatLogo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+    .macos-spinner .blade:nth-child(1)  { transform: rotate(0deg);   animation-delay: -0.916s; }
+    .macos-spinner .blade:nth-child(2)  { transform: rotate(30deg);  animation-delay: -0.833s; }
+    .macos-spinner .blade:nth-child(3)  { transform: rotate(60deg);  animation-delay: -0.75s; }
+    .macos-spinner .blade:nth-child(4)  { transform: rotate(90deg);  animation-delay: -0.666s; }
+    .macos-spinner .blade:nth-child(5)  { transform: rotate(120deg); animation-delay: -0.583s; }
+    .macos-spinner .blade:nth-child(6)  { transform: rotate(150deg); animation-delay: -0.5s; }
+    .macos-spinner .blade:nth-child(7)  { transform: rotate(180deg); animation-delay: -0.416s; }
+    .macos-spinner .blade:nth-child(8)  { transform: rotate(210deg); animation-delay: -0.333s; }
+    .macos-spinner .blade:nth-child(9)  { transform: rotate(240deg); animation-delay: -0.25s; }
+    .macos-spinner .blade:nth-child(10) { transform: rotate(270deg); animation-delay: -0.166s; }
+    .macos-spinner .blade:nth-child(11) { transform: rotate(300deg); animation-delay: -0.083s; }
+    .macos-spinner .blade:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
+
+    @keyframes macos-fade {
+      0% { background: rgba(255,255,255,0.7); }
+      100% { background: rgba(255,255,255,0.1); }
     }
 
-    /* ===== Ajustes para notebooks (1100px - 1400px) ===== */
-    @media (min-width: 1100px) and (max-width: 1400px) {
+    /* ===== Ajustes para notebooks (1100px - 1500px) - Sidebar al 70% ===== */
+    @media (min-width: 1100px) and (max-width: 1500px) {
       .video-sidebar {
-        width: 280px;
+        width: 266px; /* 380 * 0.7 */
         right: 10px;
       }
       
       .video-wrapper {
-        height: 450px;
-        border-radius: 16px;
+        height: 420px; /* 600 * 0.7 */
+        border-radius: 14px;
       }
       
       .wrap {
-        max-width: 680px;
-        margin-right: 300px;
+        max-width: 700px;
+        margin-right: 280px;
         margin-left: auto;
       }
       
-      .video-placeholder img {
-        width: 90px;
+      .macos-spinner {
+        width: 32px;
+        height: 32px;
       }
       
-      .video-placeholder .hint {
-        font-size: 11px;
+      .macos-spinner .blade {
+        height: 8px;
+        margin-top: -16px;
+        transform-origin: center 16px;
       }
     }
 
@@ -797,7 +814,7 @@
     
     @keyframes fill{ from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-    /* ===== Barra de Timeline (antes Participación) ===== */
+    /* ===== Barra de Timeline ===== */
     .timeline-bar-container {
       display: flex;
       align-items: center;
@@ -908,6 +925,7 @@
       .wrap {
         max-width: 100%;
         order: 1;
+        margin-right: auto;
       }
     }
 
@@ -998,10 +1016,22 @@
     <!-- Sidebar de Video -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
-        <!-- Placeholder cuando no hay video -->
+        <!-- Placeholder con spinner macOS -->
         <div class="video-placeholder" id="videoPlaceholder">
-          <img src="img/Logo.png" alt="Meli Pádel Master">
-          <span class="hint">Pasa el mouse sobre un jugador para ver su video</span>
+          <div class="macos-spinner">
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+          </div>
         </div>
         
         <video id="video-dani-a" muted loop playsinline preload="auto">
