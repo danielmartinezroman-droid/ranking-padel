@@ -260,16 +260,16 @@
 
     /* ===== ALTURAS DEL PODIO - Como podio real ===== */
     .podiumCard.rank1 {
-      min-height: 220px;
+      min-height: 240px;
       border-color: rgba(255,215,0,.25);
     }
 
     .podiumCard.rank2 {
-      min-height: 185px;
+      min-height: 205px;
     }
 
     .podiumCard.rank3 {
-      min-height: 160px;
+      min-height: 180px;
     }
 
     /* Hover states */
@@ -373,7 +373,6 @@
       inset: -2px;
       border-radius: 999px;
       background: var(--bg1);
-      
     }
 
     /* Borde dorado para #1 */
@@ -710,6 +709,46 @@
     }
     @keyframes fill{ from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
+    /* ===== Barra de Participación ===== */
+    .participation-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .participation-label {
+      font-size: 10px;
+      color: rgba(255,255,255,.45);
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .participation-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+      max-width: 200px;
+    }
+
+    .participation-bar > span {
+      display: block;
+      height: 100%;
+      width: var(--p);
+      background: linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,.40));
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(.2,.9,.2,1);
+    }
+
+    .participation-percent {
+      font-size: 10px;
+      color: rgba(255,255,255,.50);
+      font-family: var(--mono);
+      min-width: 32px;
+    }
+
     .right{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center; flex: 0 0 auto; }
     .pill{
       border:1px solid rgba(255,255,255,.12);
@@ -816,6 +855,10 @@
         flex-direction: column;
         gap: 6px;
       }
+
+      .participation-bar {
+        max-width: 150px;
+      }
     }
   </style>
 </head>
@@ -899,6 +942,7 @@
     const TOTAL_TOURNAMENT_SETS = 45;
     const SETS_PLAYED = 9;
     const LAST_UPDATE = "21-01-2026";
+    const SETS_PER_PLAYER = 30;  // Sets que debe jugar cada jugador
 
     const players = [
       { name: "Dani M.",   sets: 6, won: 4, lost: 2, avatar: "img/dani-m.jpg",   videoId: "dani-m",   videoScale: 1.0 },
@@ -1138,6 +1182,7 @@
 
     const perf = p => (Number(p.sets) > 0 ? Math.round((Number(p.won) / Number(p.sets)) * 100) : 0);
     const points = p => Number(p.won) || 0;
+    const participation = p => Math.round((Number(p.sets) / SETS_PER_PLAYER) * 100);
     const badgeClass = pct => pct >= 67 ? "good" : pct >= 34 ? "warn" : "bad";
 
     function medalLabel(pct){
@@ -1157,6 +1202,7 @@
       podium.innerHTML = mapped.map(p => {
         const pct = perf(p);
         const pts = points(p);
+        const part = participation(p);
         const m = medalLabel(pct);
 
         const realRank = (p === top3[0]) ? 1 : (p === top3[1]) ? 2 : 3;
@@ -1183,6 +1229,11 @@
                 <span style="font-family: var(--mono); opacity:.75;">${p.won}G · ${p.lost}P · ${p.sets} sets</span>
               </div>
               <div class="bar"><span style="--w:${pct}%"></span></div>
+              <div class="participation-bar-container">
+                <span class="participation-label">Jugado:</span>
+                <div class="participation-bar"><span style="--p:${part}%"></span></div>
+                <span class="participation-percent">${p.sets}/${SETS_PER_PLAYER}</span>
+              </div>
             </div>
           </div>
         `;
@@ -1239,6 +1290,7 @@
     sorted.forEach((p, idx) => {
       const pct = perf(p);
       const pts = points(p);
+      const part = participation(p);
       const m = medalLabel(pct);
 
       const card = document.createElement("div");
@@ -1263,6 +1315,11 @@
               </span>
             </div>
             <div class="bar"><span style="--w:${pct}%"></span></div>
+            <div class="participation-bar-container">
+              <span class="participation-label">Jugado:</span>
+              <div class="participation-bar"><span style="--p:${part}%"></span></div>
+              <span class="participation-percent">${p.sets}/${SETS_PER_PLAYER}</span>
+            </div>
           </div>
         </div>
 
@@ -1296,7 +1353,3 @@
   </script>
 </body>
 </html>
-
-
-
-
