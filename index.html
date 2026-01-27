@@ -137,6 +137,75 @@
       opacity: 1;
     }
 
+    /* ===== Placeholder cuando no hay video activo ===== */
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      
+      background: radial-gradient(ellipse at center, rgba(124,92,255,0.08) 0%, transparent 70%);
+    }
+
+    .video-placeholder.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .video-placeholder img {
+      width: 120px;
+      height: auto;
+      opacity: 0.6;
+      filter: grayscale(30%);
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    .video-placeholder .hint {
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
+      text-align: center;
+      font-style: italic;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ===== Ajustes para notebooks (1100px - 1400px) ===== */
+    @media (min-width: 1100px) and (max-width: 1400px) {
+      .video-sidebar {
+        width: 280px;
+        right: 10px;
+      }
+      
+      .video-wrapper {
+        height: 450px;
+        border-radius: 16px;
+      }
+      
+      .wrap {
+        max-width: 680px;
+        margin-right: 300px;
+        margin-left: auto;
+      }
+      
+      .video-placeholder img {
+        width: 90px;
+      }
+      
+      .video-placeholder .hint {
+        font-size: 11px;
+      }
+    }
+
     header{
       display:flex; gap:14px;
       justify-content:space-between; align-items:flex-end;
@@ -722,7 +791,7 @@
       color: rgba(255,255,255,0.35);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      
+      z-index: 1;
       pointer-events: none;
     }
     
@@ -929,6 +998,12 @@
     <!-- Sidebar de Video -->
     <aside class="video-sidebar">
       <div class="video-wrapper" id="videoWrapper">
+        <!-- Placeholder cuando no hay video -->
+        <div class="video-placeholder" id="videoPlaceholder">
+          <img src="img/Logo.png" alt="Meli Pádel Master">
+          <span class="hint">Pasa el mouse sobre un jugador para ver su video</span>
+        </div>
+        
         <video id="video-dani-a" muted loop playsinline preload="auto">
           <source src="img/Daniel Aguayo.mp4" type="video/mp4">
         </video>
@@ -1164,6 +1239,10 @@
     };
 
     function showPlayerVideo(videoId) {
+      // Ocultar placeholder
+      const placeholder = document.getElementById('videoPlaceholder');
+      if (placeholder) placeholder.classList.add('hidden');
+      
       if (currentVideo) {
         currentVideo.pause();
         currentVideo.currentTime = 0;
@@ -1192,6 +1271,10 @@
         currentVideo.style.transform = '';
         currentVideo = null;
       }
+      
+      // Mostrar placeholder
+      const placeholder = document.getElementById('videoPlaceholder');
+      if (placeholder) placeholder.classList.remove('hidden');
     }
 
     function addCardHoverEvents(cardElement, videoId) {
